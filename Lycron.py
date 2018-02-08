@@ -29,7 +29,8 @@ def Color(name):
         "Green": 0x2ecc71,
         "DarkGray": 0x222222,
         "Gray": 0x2c3e50,
-        "LightGray": 0x7f8c8d
+        "LightGray": 0x7f8c8d,
+        "DarkWhite": 0xecf0f1
     }
     if name not in ColorDict:
         raise NameError("Name of color not in list")
@@ -44,7 +45,7 @@ clock = pygame.time.Clock()
 # Set the height and width of the screen
 screen_width = 1280
 screen_height = 1080
-screen = pygame.display.set_mode([screen_width, screen_height], pygame.FULLSCREEN)
+screen = pygame.display.set_mode([screen_width, screen_height]) #, pygame.FULLSCREEN)
 
 
 # For in the event loop
@@ -110,9 +111,9 @@ class Lycron:
     Runs specific functions for Lycron. 
     """
     # Changable Variables
-    ChatHeight, ChatWidth = 810, 500  # Vars containing the length and width of the chatbox
+    ChatHeight, ChatWidth = 905, 610  # Vars containing the length and width of the chatbox
     Font_Width = 20  # Font Size
-    String_Length, String_Variation, String_Padding_min = 45, 10, 5
+    String_Length, String_Variation, String_Padding_min = 58, 15, 5
 
     # Static Variables
     PreviousText = []  # A list for the previous words that were added
@@ -129,7 +130,7 @@ class Lycron:
     def init():
         # Start up all the image files necessary
         Lycron.Font_ChatWindow = pygame.font.Font("Assets/Fonts/segoeui.ttf", Lycron.Font_Width)
-        Lycron.PossibleRows = math.floor(Lycron.ChatHeight / (Lycron.Font_ChatWindow.size("Lycron")[1] - 10))
+        Lycron.PossibleRows = math.floor(Lycron.ChatHeight / (Lycron.Font_ChatWindow.size("Lycron")[1] - 10)) - 11
 
         Lycron.Lycron00 = pygame.image.load('Assets/Lycron00.png')
         Lycron.Lycron01 = pygame.image.load('Assets/Lycron01.png')
@@ -187,8 +188,15 @@ class Lycron:
 
     @staticmethod
     def Images():
-        image = Lycron.LycronImages[Lycron.CurrentImage]
-        screen.blit(image, (550, 70))
+        # image = Lycron.LycronImages[Lycron.CurrentImage]
+        # screen.blit(image, (550, 70))
+
+        TaskBarBG = pygame.Rect((650, 70, 610, 100))  # Set the Background for the taskbar rect
+        pygame.draw.rect(screen, Color("DarkWhite"), TaskBarBG, 0)  # Color it and blit it
+
+    @staticmethod
+    def CreateCommuncation():
+        pass
 
 
 # Initiate Important Blitting Functions
