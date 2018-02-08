@@ -7,6 +7,7 @@ import pygame
 import random
 import time
 import math
+import LycronData
 
 # Important Variables
 FrameRate = 30
@@ -30,7 +31,7 @@ def Color(name):
         "DarkGray": 0x222222,
         "Gray": 0x2c3e50,
         "LightGray": 0x7f8c8d,
-        "DarkWhite": 0xecf0f1
+        "DarkWhite": 0xe8e8e8
     }
     if name not in ColorDict:
         raise NameError("Name of color not in list")
@@ -114,6 +115,8 @@ class Lycron:
     ChatHeight, ChatWidth = 905, 610  # Vars containing the length and width of the chatbox
     Font_Width = 20  # Font Size
     String_Length, String_Variation, String_Padding_min = 58, 15, 5
+    GenerateStatuses = 8  # How many to generate and keep track of
+    StatusPositionX, StatusPositionY, StatusBuffer = 650, 70, 105
 
     # Static Variables
     PreviousText = []  # A list for the previous words that were added
@@ -125,6 +128,9 @@ class Lycron:
     Lycron03 = None
     LycronImages = [Lycron00, Lycron01, Lycron02, Lycron03]
     CurrentImage = 0
+    SegoeUI_Small = pygame.font.Font("Assets/Fonts/segoeui.ttf", 15)
+    SemiboldSegoeUI_Small = pygame.font.Font("Assets/Fonts/seguisb.ttf", 15)
+    StatusList = []
 
     @staticmethod
     def init():
@@ -141,6 +147,13 @@ class Lycron:
         # Generate Starting Text rows
         for i in range(Lycron.PossibleRows):
             Lycron.PreviousText.append(Lycron.randstr(Lycron.String_Length))  # Generates random strings
+
+        # Generate the Status Lists that'll be used
+        StartingStatusPosition = Lycron.StatusPositionY
+        for i in range(Lycron.GenerateStatuses):
+            status = Lycron.CreateCommuncation((Lycron.StatusPositionX, StartingStatusPosition), {}, color=1)
+            Lycron.StatusList.append(status)
+            StartingStatusPosition += Lycron.StatusBuffer # Add 100 px for the size of the box and a buffer of 20
 
     @staticmethod
     def randstr(length):  # HELPER FUNCTION
@@ -188,15 +201,130 @@ class Lycron:
 
     @staticmethod
     def Images():
-        # image = Lycron.LycronImages[Lycron.CurrentImage]
-        # screen.blit(image, (550, 70))
-
-        TaskBarBG = pygame.Rect((650, 70, 610, 100))  # Set the Background for the taskbar rect
-        pygame.draw.rect(screen, Color("DarkWhite"), TaskBarBG, 0)  # Color it and blit it
+        tempList = []
+        for status in Lycron.StatusList:
+            new_status = Lycron.CreateCommuncation(status["pos"], status, color=status["Color"])
+            tempList.append(new_status)
+        Lycron.StatusList = tempList
 
     @staticmethod
-    def CreateCommuncation():
-        pass
+    def CreateCommuncation(pos: tuple, info: dict, color: int):
+        """
+        Creates an object of shapes for a communcation button
+        :param pos: A TUPLE containing the position of the box
+        :param info: A DICT containing necesaary info for the box. 
+        :param color: A BOOL that'll decide the color.  1=Green,  0=Red,   2=Yellow
+        :return: updated Info Dict of the object
+        """
+        # info
+        if not info: # Generate information for each object
+            info = {
+                "ConnectedText": "Connected To: ",
+                "Name": "",  # To be filled in with the next step
+                "pos": pos,
+                "JustChanged": False
+            }
+            # Get Name of Station
+            PreNames = ["Station", "POD", "NanoSystem", "Control Panel"]
+            string = random.choice(PreNames) + " " + random.choice(LycronData.Military_Alphabet) + "-"
+            string += random.choice(LycronData.Military_Alphabet) + "-"
+            string += random.choice(LycronData.Military_Alphabet)
+            info["Name"] = string
+
+            # ID Number:
+            info["ID"] = str(random.randrange(100000, 999999)) + str(random.randrange(100000, 999999))
+
+            # Status
+            info["CurrentStatus"] = random.choice(LycronData.Good_Statuses)
+        # Cleanup
+        if color == 0 and info["JustChanged"]:
+            info["ConnectedText"] = "Not Connected To: "
+            info['CurrentStatus'] = random.choice(LycronData.Bad_Statuses)
+            info["JustChanged"] = False
+
+        if random.randrange(400) == 100: # todo add mode
+            if color == 0:
+                info['CurrentStatus'] = random.choice(LycronData.Bad_Statuses)
+                color = 1
+            elif color == 1:
+                info['CurrentStatus'] = random.choice(LycronData.Good_Statuses)
+            elif color == 2:
+                info['CurrentStatus'] = random.choice(LycronData.Bad_Statuses)
+                color = 1
+
+        # Background:
+        BoxSize = (610, 100)
+
+        BoxBackground = pygame.Rect(pos, BoxSize)  # Set the Background for the taskbar rect
+        pygame.draw.rect(screen, Color("DarkWhite"), BoxBackground, 0)  # Color it and blit it
+        pygame.draw.rect(screen, Color("Black"), BoxBackground, 1)  # Color it and blit it
+
+        # Colored Box
+        StatusPos = (pos[0] + 5, pos[1] + 5)
+        StatusSize = (9, 90)
+        if color == 0:
+            StatusColor = Color("Red")
+        elif color == 1:
+            StatusColor = Color("Green")
+        elif color == 2:
+            StatusColor = Color("Yellow")
+
+        Status = pygame.Rect(StatusPos, StatusSize)  # Create the object
+        pygame.draw.rect(screen, StatusColor, Status, 0)  # Color it and blit it
+        #Outline
+        StatusOutline = pygame.Rect((pos[0] + 4, pos[1] + 4), (11, 92))  # Create the object
+        pygame.draw.rect(screen, Color("Black"), StatusOutline, 1)  # Color it and blit it
+
+        # Text
+        ConnectedToPos = (pos[0] + 20, pos[1] + 0)
+        ConnectedTo = Lycron.SegoeUI_Small.render(info["ConnectedText"], True, (0, 0, 0))  # Create the text
+        screen.blit(ConnectedTo, ConnectedToPos)  # Add to the screen
+        ConnectedTo_Width, ConnectedTo_Height = Lycron.SegoeUI_Small.size(info["ConnectedText"])
+
+        ServerName = Lycron.SemiboldSegoeUI_Small.render(info["Name"], True, (0, 0, 0))
+        screen.blit(ServerName, (ConnectedToPos[0] + ConnectedTo_Width, ConnectedToPos[1]))
+
+        # -== Extra Text ==-
+          # ID
+        IDPos = (pos[0] + 20, pos[1] + ConnectedTo_Height)
+        IDText = "Identification Number: " + info["ID"]
+        ID = Lycron.SegoeUI_Small.render(IDText, True, (0, 0, 0))
+        screen.blit(ID, IDPos)
+        ID_Width, ID_Height = Lycron.SegoeUI_Small.size(IDText)
+          # Current Status
+        CurrentStatusPos = (pos[0] + 20, IDPos[1] + ID_Height)
+        CurrentStatusText = "Current Status: " + info["CurrentStatus"]
+        CurrentStatus = Lycron.SegoeUI_Small.render(CurrentStatusText, True, (0, 0, 0))
+        screen.blit(CurrentStatus, CurrentStatusPos)
+        CurrentStatus_Width, CurrentStatus_Height = Lycron.SegoeUI_Small.size(CurrentStatusText)
+
+
+        info['Color'] = color
+        return info
+
+    @staticmethod
+    def RandColorChange():  # Runs every 5 seconds //todo add if mode is red
+        if random.randrange(4) == 1:  # so like 3 per minute?
+            StatusList = Lycron.StatusList
+            selected_int = random.randint(0, len(StatusList)-1)
+
+            # Randomly chooses either red or orange
+            StatusList[selected_int]["Color"] = random.choice([0, 2])
+            StatusList[selected_int]["JustChanged"] = True
+
+            SelectedStatus = StatusList[selected_int]  # Make dedicated Variable
+            StatusList.remove(SelectedStatus)          # Remove from List
+            StatusList =[SelectedStatus] + StatusList  # Move to the top of the list
+
+            # Redo Positions
+            starting = Lycron.StatusPositionY
+            for status in StatusList:
+                status["pos"] = (Lycron.StatusPositionX, starting)
+                starting += Lycron.StatusBuffer
+
+            Lycron.StatusList = StatusList
+
+
 
 
 # Initiate Important Blitting Functions
@@ -235,9 +363,7 @@ while not done:
         TimerRect = pygame.draw.rect(screen, Color("Red"), (0, screen_height-30, int(screen_width*CountDown/300), 10))
 
     if Seconds % 5 == 0 and Frame == 0: # Once every 5 seconds
-        Lycron.CurrentImage += 1
-        if Lycron.CurrentImage >= len(Lycron.LycronImages):
-            Lycron.CurrentImage = 0
+        Lycron.RandColorChange()
 
     # Update the screen
     pygame.display.flip()
@@ -253,3 +379,5 @@ while not done:
         Frame = 0
         Seconds = Seconds + 1 if Seconds < 60 else 0
     clock.tick(FrameRate)
+
+pygame.quit()
