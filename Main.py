@@ -20,6 +20,9 @@ import Helpers, Lycron
 # Important Variables
 FrameRate = 30
 Name = "Lycron"
+mode = 0    # Starting Mode!
+bootSeconds = 1  # How many seconds to wait before booting
+EscapeTime = 3   # How many seconds to wait before escaping
 
 # Initialize Pygame and clock
 pygame.init()
@@ -69,7 +72,7 @@ class TaskBar:
         TaskBar.SearchBar = pygame.image.load('Assets/Search.png')
 
     @staticmethod
-    def CreateTaskbar():
+    def CreateTaskbar(Escape=None):
         """
         Prepares the Taskbar to be put on the screen
         """
@@ -89,8 +92,48 @@ class TaskBar:
         # Search Bar
         screen.blit(TaskBar.SearchBar, (text_width + Icon_Width + 15, 5))  # Put the search bar 15pix from the text
 
+        # Escape
+        if Escape > 2:
+            percentage = int(Escape/(FrameRate*EscapeTime)*100)
+
+            EscapeLocation = text_width + Icon_Width + 15 + 370 + 15
+            EscapeBarBG = pygame.Rect((EscapeLocation, 5, 100, 37))  # Set the Background for the taskbar rect
+            pygame.draw.rect(screen, Helpers.Color("White"), EscapeBarBG, 2)  # Color it and blit it
+
+            EscapeBarBG = pygame.Rect((EscapeLocation, 5, percentage, 37))  # Set the Background for the taskbar rect
+            pygame.draw.rect(screen, Helpers.Color("White"), EscapeBarBG, 0)
+            if percentage >= 95:
+                EscapeWords = TaskBar.Font_SegoeUI.render("Escape", True, (0, 0, 0))  # Render the Profile Name
+                screen.blit(EscapeWords, (EscapeLocation+5, 0))  # Blit the name 5pix next to the icon
+
+
+class Boot:
+    counter = 0
+    Font_SegoeUI = pygame.font.Font("Assets/Fonts/segoeui.ttf", 5000)
+    PODName = None
+    @staticmethod
+    def init():
+        Boot.PODName = pygame.image.load('Assets/PODName.png')
+
+
+    @staticmethod
+    def Start():
+        screen.fill(Helpers.Color("Black"))
+        Boot.counter += 1
+
+        screen.blit(Boot.PODName, (0, 404))  # Blit the image
+
+        if int(Boot.counter / FrameRate) >= bootSeconds:
+            return False
+        else:
+            return True
+
+
+
+
 # Initiate Important Blitting Functions
 TaskBar.init()
+Boot.init()
 
 # Set the file that will be used based on the person
 if Name == "Lycron":
@@ -103,27 +146,40 @@ done = False
 CountDown = 0
 Frame = 0
 Seconds = 0
+Escape = 0  # How long they've been holding escape
+pygame.key.set_repeat(500, 30)
 # -------- Main Program Loop -----------
 while not done:
     # Keyboard and Mouse Events
     for event in pygame.event.get():
         if event.type == pygame.QUIT:    done = True
-        if Key(event, pygame.K_ESCAPE):  done = True
+        if Key(event, pygame.K_ESCAPE):
+            Escape += 1
+            if Escape >= FrameRate * EscapeTime:
+                done = True
+
+        if event.type == pygame.KEYUP and event.key == pygame.K_ESCAPE:
+            Escape = 0
 
     # Clear the screen
     screen.fill(Helpers.Color("White"))
 
-    # Add Taskbar
-    TaskBar.CreateTaskbar()
+    if mode == 1 or mode == 2:
+        # Add Taskbar
+        TaskBar.CreateTaskbar(Escape=Escape)
 
-    # Add Mode_1 Loop
-    user.Navigator(mode=1)
+        # Add Mode_1 Loop
+        user.Navigator(mode=mode)
 
-    if CountDown > 0:
-        TimerRect = pygame.draw.rect(screen, Helpers.Color("Red"), (0, screen_height-30, int(screen_width*CountDown/300), 10))
+        if CountDown > 0:
+            TimerRect = pygame.draw.rect(screen, Helpers.Color("Red"), (0, screen_height-30, int(screen_width*CountDown/300), 10))
 
-    if Seconds % 5 == 0 and Frame == 0: # Once every 5 seconds
-        user.Navigator(mode=1, unit=5)
+        if Seconds % 5 == 0 and Frame == 0: # Once every 5 seconds
+            user.Navigator(mode=mode, unit=5)
+
+    elif mode == 0:
+        if not Boot.Start():
+            mode = 1
 
     # Update the screen
     pygame.display.flip()
