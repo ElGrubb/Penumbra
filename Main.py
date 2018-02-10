@@ -26,7 +26,7 @@ if "Already" not in output:
 
 # Important Variables
 FrameRate = 30
-Name = "Lycron"
+Name = "Yakim"
 mode = 0    # Starting Mode!
 bootSeconds = 1  # How many seconds to wait before booting
 EscapeTime = 3   # How many seconds to wait before escaping
