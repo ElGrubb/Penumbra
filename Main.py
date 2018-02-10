@@ -6,7 +6,7 @@ import pygame
 import random
 import time
 import math
-import git, os
+import git, os, sys
 import Helpers, Lycron, Yakim
 
 """ Modes
