@@ -22,6 +22,7 @@ g = git.cmd.Git(os.getcwd())
 output = g.pull()
 if "Already" not in output:
     os.execv(sys.executable, ['python'] + sys.argv)
+    print("Hi dom")
 
 # Important Variables
 FrameRate = 30
