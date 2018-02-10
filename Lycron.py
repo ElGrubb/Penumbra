@@ -7,6 +7,7 @@ import Helpers
 pygame.font.init()
 
 screen = None
+screen_height, screen_width = None, None
 Military_Alphabet = [
     "Alpha",
     "Bravo",
@@ -56,15 +57,16 @@ Bad_Statuses = [
     "Lost connection to host. Retrying 12.02/s"
 ]
 
+
 class Mode_1:
     """
     Runs specific functions for Mode_1. 
     """
     # Changable Variables
-    ChatHeight, ChatWidth = 905, 610  # Vars containing the length and width of the chatbox
+    ChatHeight, ChatWidth = 925, 610  # Vars containing the length and width of the chatbox
     Font_Width = 20  # Font Size
     String_Length, String_Variation, String_Padding_min = 58, 15, 5
-    GenerateStatuses = 8  # How many to generate and keep track of
+    GenerateStatuses = 9  # How many to generate and keep track of
     StatusPositionX, StatusPositionY, StatusBuffer = 650, 70, 105
 
     # Static Variables
@@ -81,6 +83,8 @@ class Mode_1:
     SegoeUI_Small = pygame.font.Font("Assets/Fonts/segoeui.ttf", 15)
     SemiboldSegoeUI_Small = pygame.font.Font("Assets/Fonts/seguisb.ttf", 15)
     StatusList = []
+    BBposition = (0, 1050)
+    BBimage = None
 
     @staticmethod
     def init():
@@ -104,6 +108,7 @@ class Mode_1:
             status = Mode_1.CreateCommuncation((Mode_1.StatusPositionX, StartingStatusPosition), {}, color=1)
             Mode_1.StatusList.append(status)
             StartingStatusPosition += Mode_1.StatusBuffer # Add 100 px for the size of the box and a buffer of 20
+        Mode_1.BBimage = pygame.image.load('Assets/LycronBottomBar.png')
 
         Mode_1.initiated = True
 
@@ -128,13 +133,19 @@ class Mode_1:
         return string
 
     @staticmethod
-    def Text():
+    def Text(mode=2):
         # Create Black Box
         ChatBoxBG = pygame.Rect((20, 70, Mode_1.ChatWidth, Mode_1.ChatHeight))
         pygame.draw.rect(screen, Helpers.Color("DarkGray"), ChatBoxBG, 0)
 
+        # Delay Time
+        if mode == 1:
+            Delay = 10
+        elif mode == 2:
+            Delay = 2
+
         # Add some dialogue
-        if random.randrange(7) == 3: # 1/7 chance of text occuring! This way theres no pattern
+        if random.randrange(Delay) == 1: # 1/7 chance of text occuring! This way theres no pattern
             Mode_1.PreviousText.append(Mode_1.randstr(Mode_1.String_Length))  # Generates random strings
 
         if len(Mode_1.PreviousText) > Mode_1.PossibleRows:  # Limit the number of things said so there's no excess lines
@@ -189,20 +200,26 @@ class Mode_1:
             # Status
             info["CurrentStatus"] = random.choice(Good_Statuses)
         # Cleanup
-        if color == 0 and info["JustChanged"]:
+        if color == 0 and info["JustChanged"]:  # If it just changed from Green to Red
             info["ConnectedText"] = "Not Connected To: "
             info['CurrentStatus'] = random.choice(Bad_Statuses)
+            info["JustChanged"] = False
+        elif color == 1 and info["JustChanged"]:  # If it just changed from Red to Green
+            info["ConnectedText"] = "Connected To: "
+            info['CurrentStatus'] = random.choice(Good_Statuses)
             info["JustChanged"] = False
 
         if random.randrange(400) == 100: # todo add mode
             if color == 0:
                 info['CurrentStatus'] = random.choice(Bad_Statuses)
                 color = 1
+                info["JustChanged"] = True
             elif color == 1:
                 info['CurrentStatus'] = random.choice(Good_Statuses)
             elif color == 2:
                 info['CurrentStatus'] = random.choice(Bad_Statuses)
                 color = 1
+                info["JustChanged"] = True
 
         # Background:
         BoxSize = (610, 100)
@@ -212,8 +229,8 @@ class Mode_1:
         pygame.draw.rect(screen, Helpers.Color("Black"), BoxBackground, 1)  # Color it and blit it
 
         # Colored Box
-        StatusPos = (pos[0] + 5, pos[1] + 5)
-        StatusSize = (9, 90)
+        StatusPos = (pos[0] , pos[1] )  # (pos[0] + 5, pos[1] + 5)
+        StatusSize = (15, 100)          # (9, 90)
         if color == 0:
             StatusColor = Helpers.Color("Red")
         elif color == 1:
@@ -221,10 +238,10 @@ class Mode_1:
         elif color == 2:
             StatusColor = Helpers.Color("Yellow")
 
-        Status = pygame.Rect(StatusPos, StatusSize)  # Create the object
-        pygame.draw.rect(screen, StatusColor, Status, 0)  # Color it and blit it
+        Status = pygame.Rect(StatusPos, StatusSize)       # (pos[0] + 4, pos[1] + 4)  (11, 92)
+        pygame.draw.rect(screen, StatusColor, Status, 0)
         #Outline
-        StatusOutline = pygame.Rect((pos[0] + 4, pos[1] + 4), (11, 92))  # Create the object
+        StatusOutline = pygame.Rect(StatusPos, StatusSize)  # Create the object
         pygame.draw.rect(screen, Helpers.Color("Black"), StatusOutline, 1)  # Color it and blit it
 
         # Text
@@ -275,10 +292,16 @@ class Mode_1:
 
             Mode_1.StatusList = StatusList
 
+
+    @staticmethod
+    def BottomBar():
+        screen.blit(Mode_1.BBimage, Mode_1.BBposition)
+
     @staticmethod
     def Run():
         Mode_1.Text()
         Mode_1.Images()
+        Mode_1.BottomBar()
 
 
 def Navigator(mode: int, unit=0):

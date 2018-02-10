@@ -130,7 +130,6 @@ class Boot:
 
 
 
-
 # Initiate Important Blitting Functions
 TaskBar.init()
 Boot.init()
@@ -138,7 +137,9 @@ Boot.init()
 # Set the file that will be used based on the person
 if Name == "Lycron":
     user = Lycron
-    Lycron.screen = screen
+    user.screen = screen
+    user.screen_height, user.screen_width = screen_height, screen_width
+
 
 # Variables for loop
 mode = 0
