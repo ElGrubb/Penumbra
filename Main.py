@@ -6,7 +6,8 @@ import pygame
 import random
 import time
 import math
-import Helpers, Lycron
+import git
+import Helpers, Lycron, Yakim
 
 """ Modes
 0: Boot
@@ -17,9 +18,13 @@ import Helpers, Lycron
 10: End
 """
 
+g = git.cmd.Git(os.getcwd())
+output = g.pull()
+print(output)
+
 # Important Variables
 FrameRate = 30
-Name = "Lycron"
+Name = "Yakim"
 mode = 0    # Starting Mode!
 bootSeconds = 1  # How many seconds to wait before booting
 EscapeTime = 3   # How many seconds to wait before escaping
@@ -137,8 +142,10 @@ Boot.init()
 # Set the file that will be used based on the person
 if Name == "Lycron":
     user = Lycron
-    user.screen = screen
-    user.screen_height, user.screen_width = screen_height, screen_width
+elif Name == "Yakim":
+    user = Yakim
+user.screen = screen
+user.screen_height, user.screen_width = screen_height, screen_width
 
 
 # Variables for loop
