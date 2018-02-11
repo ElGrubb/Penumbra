@@ -15,7 +15,8 @@ def Color(name):
         "DarkGray": 0x222222,
         "Gray": 0x2c3e50,
         "LightGray": 0x7f8c8d,
-        "DarkWhite": 0xe8e8e8
+        "DarkWhite": 0xe8e8e8,
+        "Teal": 0x1abc9c
     }
     if name not in ColorDict:
         raise NameError("Name of color not in list")

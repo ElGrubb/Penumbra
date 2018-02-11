@@ -6,8 +6,13 @@ import Helpers
 
 pygame.font.init()
 
-screen = None
-screen_height, screen_width = None, None
+
+class Sys:
+    screen = None
+    screen_height, screen_width = None, None
+
+    FrameRate = None
+
 Military_Alphabet = [
     "Alpha",
     "Bravo",
@@ -56,6 +61,10 @@ Bad_Statuses = [
     "Repair Microtransation Server right now",
     "Lost connection to host. Retrying 12.02/s"
 ]
+
+Possible_Identification = ["POD", "BOT", "COM", "NANO", "LYC", "COMP", "Dom"]
+Rare_Possible_Identification = ["Colin", "Liam", "Grayson", "David", "Q", "Katy",
+                               "Grace", "Alyssa", "Serena", "Emily", "Christina", "Abby"]
 
 
 class Mode_1:
@@ -125,18 +134,21 @@ class Mode_1:
             string += random.choice(characters)  # Add a random character
 
         # Add Identification:
-        Possible_Identification = ["POD", "BOT", "COM", "NANO", "LYC", "COMP", "Dom"]
-        string = random.choice(Possible_Identification) + " " + str(random.randrange(999)) + ":   " + string
+        if random.randint(0,30) < 3:
+            character_name = random.choice(Rare_Possible_Identification)
+        else:
+            character_name = random.choice(Possible_Identification)
+        string = character_name + " " + str(random.randrange(999)) + ":   " + string
         string = string[0:length]
 
         string = string[0:len(string)-random.randrange(Mode_1.String_Variation)].strip()  # Remove a bit from the end to make it random length
         return string
 
     @staticmethod
-    def Text(mode=2):
+    def Text(mode=1):
         # Create Black Box
         ChatBoxBG = pygame.Rect((20, 70, Mode_1.ChatWidth, Mode_1.ChatHeight))
-        pygame.draw.rect(screen, Helpers.Color("DarkGray"), ChatBoxBG, 0)
+        pygame.draw.rect(Sys.screen, Helpers.Color("DarkGray"), ChatBoxBG, 0)
 
         # Delay Time
         if mode == 1:
@@ -159,7 +171,7 @@ class Mode_1:
             while Mode_1.Font_ChatWindow.size(line)[0] > Mode_1.ChatWidth:  # Ensures each is not too long
                 line = line[0:len(line)-1]  # If it is, removes 1 from it until it's not too long
             ChatText = Mode_1.Font_ChatWindow.render(line, True, (255, 255, 255))  # Create the text
-            screen.blit(ChatText, (25, 70 + CurrentDistance))  # Add to the screen
+            Sys.screen.blit(ChatText, (25, 70 + CurrentDistance))  # Add to the Sys.screen
             CurrentDistance += Mode_1.Font_ChatWindow.size(line)[1] - Mode_1.String_Padding_min  # Create new distance
 
     @staticmethod
@@ -225,8 +237,8 @@ class Mode_1:
         BoxSize = (610, 100)
 
         BoxBackground = pygame.Rect(pos, BoxSize)  # Set the Background for the taskbar rect
-        pygame.draw.rect(screen, Helpers.Color("DarkWhite"), BoxBackground, 0)  # Color it and blit it
-        pygame.draw.rect(screen, Helpers.Color("Black"), BoxBackground, 1)  # Color it and blit it
+        pygame.draw.rect(Sys.screen, Helpers.Color("DarkWhite"), BoxBackground, 0)  # Color it and blit it
+        pygame.draw.rect(Sys.screen, Helpers.Color("Black"), BoxBackground, 1)  # Color it and blit it
 
         # Colored Box
         StatusPos = (pos[0] , pos[1] )  # (pos[0] + 5, pos[1] + 5)
@@ -239,32 +251,32 @@ class Mode_1:
             StatusColor = Helpers.Color("Yellow")
 
         Status = pygame.Rect(StatusPos, StatusSize)       # (pos[0] + 4, pos[1] + 4)  (11, 92)
-        pygame.draw.rect(screen, StatusColor, Status, 0)
+        pygame.draw.rect(Sys.screen, StatusColor, Status, 0)
         #Outline
         StatusOutline = pygame.Rect(StatusPos, StatusSize)  # Create the object
-        pygame.draw.rect(screen, Helpers.Color("Black"), StatusOutline, 1)  # Color it and blit it
+        pygame.draw.rect(Sys.screen, Helpers.Color("Black"), StatusOutline, 1)  # Color it and blit it
 
         # Text
         ConnectedToPos = (pos[0] + 20, pos[1] + 0)
         ConnectedTo = Mode_1.SegoeUI_Small.render(info["ConnectedText"], True, (0, 0, 0))  # Create the text
-        screen.blit(ConnectedTo, ConnectedToPos)  # Add to the screen
+        Sys.screen.blit(ConnectedTo, ConnectedToPos)  # Add to the Sys.screen
         ConnectedTo_Width, ConnectedTo_Height = Mode_1.SegoeUI_Small.size(info["ConnectedText"])
 
         ServerName = Mode_1.SemiboldSegoeUI_Small.render(info["Name"], True, (0, 0, 0))
-        screen.blit(ServerName, (ConnectedToPos[0] + ConnectedTo_Width, ConnectedToPos[1]))
+        Sys.screen.blit(ServerName, (ConnectedToPos[0] + ConnectedTo_Width, ConnectedToPos[1]))
 
         # -== Extra Text ==-
           # ID
         IDPos = (pos[0] + 20, pos[1] + ConnectedTo_Height)
         IDText = "Identification Number: " + info["ID"]
         ID = Mode_1.SegoeUI_Small.render(IDText, True, (0, 0, 0))
-        screen.blit(ID, IDPos)
+        Sys.screen.blit(ID, IDPos)
         ID_Width, ID_Height = Mode_1.SegoeUI_Small.size(IDText)
           # Current Status
         CurrentStatusPos = (pos[0] + 20, IDPos[1] + ID_Height)
         CurrentStatusText = "Current Status: " + info["CurrentStatus"]
         CurrentStatus = Mode_1.SegoeUI_Small.render(CurrentStatusText, True, (0, 0, 0))
-        screen.blit(CurrentStatus, CurrentStatusPos)
+        Sys.screen.blit(CurrentStatus, CurrentStatusPos)
         CurrentStatus_Width, CurrentStatus_Height = Mode_1.SegoeUI_Small.size(CurrentStatusText)
 
         info['Color'] = color
@@ -295,7 +307,7 @@ class Mode_1:
 
     @staticmethod
     def BottomBar():
-        screen.blit(Mode_1.BBimage, Mode_1.BBposition)
+        Sys.screen.blit(Mode_1.BBimage, Mode_1.BBposition)
 
     @staticmethod
     def Run():
@@ -312,6 +324,7 @@ def Navigator(mode: int, unit=0):
 
         if not unit:
             Mode_1.Run()
+
         elif unit == 5:
             Mode_1.RandColorChange()
 

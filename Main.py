@@ -22,7 +22,6 @@ g = git.cmd.Git(os.getcwd())
 output = g.pull()
 if "Already" not in output:
     os.execv(sys.executable, ['python'] + sys.argv)
-    print("Hi dom")
 
 # Important Variables
 FrameRate = 30
@@ -146,8 +145,9 @@ if Name == "Lycron":
     user = Lycron
 elif Name == "Yakim":
     user = Yakim
-user.screen = screen
-user.screen_height, user.screen_width = screen_height, screen_width
+user.Sys.screen = screen
+user.Sys.screen_height, user.screen_width = screen_height, screen_width
+user.Sys.FrameRate = FrameRate
 
 
 # Variables for loop
