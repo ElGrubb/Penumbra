@@ -2,6 +2,7 @@
 Main file of each setup. Will eventually have login and bootup. 
 Redirects based on what character computer it is.
 """
+# TODO Login and Bootup
 import pygame
 import random
 import time
@@ -38,7 +39,7 @@ clock = pygame.time.Clock()
 # Set the height and width of the screen
 screen_width = 1280
 screen_height = 1080
-screen = pygame.display.set_mode([screen_width, screen_height]) #, pygame.FULLSCREEN)
+screen = pygame.display.set_mode([screen_width, screen_height], pygame.FULLSCREEN)
 
 
 # For in the event loop
