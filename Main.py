@@ -39,7 +39,7 @@ clock = pygame.time.Clock()
 # Set the height and width of the screen
 screen_width = 1280
 screen_height = 1080
-screen = pygame.display.set_mode([screen_width, screen_height], pygame.FULLSCREEN, 0, 32)
+screen = pygame.display.set_mode([screen_width, screen_height], pygame.FULLSCREEN, 32)
 
 
 # For in the event loop
