@@ -16,6 +16,7 @@ class Sys:
 class Mode_1:
     initiated = False
     Frame = 0
+    TotalFrames = 600
 
     WaterGraphValues = []  # Should be around 300 Values
     CarbonGraphValues = []  # Should also be around 300 values
@@ -23,7 +24,9 @@ class Mode_1:
 
     BoxText = pygame.font.Font("Assets/Fonts/segoeuisl.ttf", 27)
     PercentText = pygame.font.Font("Assets/Fonts/segoeuisl.ttf", 20)
+    YakimText = None
 
+    TopData = []
 
     @staticmethod
     def init():
@@ -37,16 +40,29 @@ class Mode_1:
             """
             First = math.radians(2 * (360 / FrameRate) * Frame)
             Second = math.radians((360 / FrameRate) * Frame)
-            Third = math.radians(2 * (360 / FrameRate) * Frame/3) if UseThird else 0
+            Third = math.radians(2 * (360 / FrameRate) * Frame/4) if UseThird else 0
             sin = math.sin(First) + math.sin(Second) + math.sin(Third)
             return round(Scale * sin, 3)
 
         # Use GraphSin() to generate WaterGraph and CarbonGraph Values
-        for i in range(Sys.FrameRate*10):
+        for i in range(Mode_1.TotalFrames):
             Mode_1.WaterGraphValues.append(round(GraphSin(150, i, 10)))
             Mode_1.CarbonGraphValues.append(round(GraphSin(50, i, 3)))
             Mode_1.HumGraphValues.append(round(GraphSin(300, i, 8, UseThird=1)))
 
+        def TopChartWork(Frame):
+            Nitrogen = math.radians((360 / 300) * Frame)
+            Oxygen = math.radians(2*(360 / 300) * Frame)
+
+            f_Nitrogen = round(10 * math.sin(Nitrogen))
+            f_Oxygen = round(5 * math.sin(Oxygen))
+
+            return (f_Nitrogen, f_Oxygen)
+
+        for i in range(Mode_1.TotalFrames):
+            Mode_1.TopData.append(TopChartWork(i))
+
+        Mode_1.YakimText = pygame.image.load('Assets/Yakim01.png')
         Mode_1.initiated = True
 
     @staticmethod
@@ -98,10 +114,71 @@ class Mode_1:
         :return: A bigass chart that tells the composition of the atmosphere
         """
         TopChartPosition = (20, 70, 1240, 60)
+        TotalLength = 1240
+
+        # Nitrogen
+        NitrogenPosition = (TopChartPosition[0], TopChartPosition[1])
+        NitrogenLength = 0.75 * TotalLength + Mode_1.TopData[Mode_1.Frame][0]  # TODO this
+        NitrogenTotal = NitrogenPosition + (NitrogenLength, TopChartPosition[3])
+
+        NitrogenBox = pygame.Rect(NitrogenTotal)  # Insides of Nitrogen
+        pygame.draw.rect(Sys.screen, Helpers.Color("Purple"), NitrogenBox)  # Blit it
+        pygame.draw.rect(Sys.screen, Helpers.Color("Black"), NitrogenBox, 1)  # Outline it!
+
+        # Oxygen
+        OxygenPosition = (NitrogenLength + TopChartPosition[0], TopChartPosition[1])
+        OxygenLength = 0.2 * TotalLength + Mode_1.TopData[Mode_1.Frame][1] # TODO this
+        OxygenTotal = OxygenPosition + (OxygenLength, TopChartPosition[3])
+
+        OxygenBox = pygame.Rect(OxygenTotal)  # Insides of Nitrogen
+        pygame.draw.rect(Sys.screen, Helpers.Color("Blue"), OxygenBox)  # Blit it
+        pygame.draw.rect(Sys.screen, Helpers.Color("Black"), OxygenBox, 1)  # Outline it!
+
+        # Remaining
+        RemainingLength = TotalLength - OxygenLength - NitrogenLength
+        if RemainingLength % 2 != 0:
+            RemainingLength = ((RemainingLength-1)/2, (RemainingLength+1)/2)
+        else:
+            RemainingLength = (RemainingLength/2, RemainingLength/2)
+
+        # Argon
+        ArgonPosition = (NitrogenLength + OxygenLength + TopChartPosition[0], TopChartPosition[1])
+        ArgonLength = int(RemainingLength[0])
+        ArgonTotal = ArgonPosition + (ArgonLength, TopChartPosition[3])
+
+        ArgonBox = pygame.Rect(ArgonTotal)  # Insides of Argon
+        pygame.draw.rect(Sys.screen, Helpers.Color("Yellow"), ArgonBox)  # Blit it
+        pygame.draw.rect(Sys.screen, Helpers.Color("Black"), ArgonBox, 1)  # Outline it!
+
+        # Other
+        OtherPosition = (ArgonPosition[0] + ArgonLength, TopChartPosition[1])
+        OtherLength = int(RemainingLength[1])
+        OtherTotal = OtherPosition + (OtherLength, TopChartPosition[3])
+
+        OtherBox = pygame.Rect(OtherTotal)  # Insides of Argon
+        pygame.draw.rect(Sys.screen, Helpers.Color("RedOrange"), OtherBox)  # Blit it
+        pygame.draw.rect(Sys.screen, Helpers.Color("Black"), OtherBox, 1)  # Outline it!
 
         # Full Outline
         FullOutline = pygame.Rect(TopChartPosition)  # Outline of the box object
         pygame.draw.rect(Sys.screen, Helpers.Color("Black"), FullOutline, 2)  # Blit it
+
+        ### TEXT
+        # Nitrogen
+        NiSize = Mode_1.BoxText.size("Nitrogen")
+        NiPos = (NitrogenTotal[0] + NitrogenLength - NiSize[0]-5, NitrogenTotal[1]+6)
+        NiText = Mode_1.BoxText.render("Nitrogen", True, (0, 0, 0))  # Render the Percentage Text
+        Sys.screen.blit(NiText, NiPos)  # Blit it
+
+        # Oxygen
+        OxySize = Mode_1.BoxText.size("Oxygen")
+        OxyPos = (OxygenTotal[0] + OxygenLength - OxySize[0] - 5, OxygenTotal[1] + 6)
+        OxyText = Mode_1.BoxText.render("Oxygen", True, (0, 0, 0))  # Render the Percentage Text
+        Sys.screen.blit(OxyText, OxyPos)  # Blit it
+
+    @staticmethod
+    def GenText():
+        pass
 
     @staticmethod
     def Run():
@@ -109,6 +186,8 @@ class Mode_1:
             Mode_1.Frame = 0
         else:
             Mode_1.Frame += 1
+
+        Sys.screen.blit(Mode_1.YakimText, (20, 150))  # Blit the image
 
         # Set up Graphs on sidebar
         GraphYPos = 170
