@@ -118,7 +118,7 @@ class Mode_1:
 
         # Nitrogen
         NitrogenPosition = (TopChartPosition[0], TopChartPosition[1])
-        NitrogenLength = 0.75 * TotalLength + Mode_1.TopData[Mode_1.Frame][0]  # TODO this
+        NitrogenLength = 0.75 * TotalLength + Mode_1.TopData[Mode_1.Frame][0]
         NitrogenTotal = NitrogenPosition + (NitrogenLength, TopChartPosition[3])
 
         NitrogenBox = pygame.Rect(NitrogenTotal)  # Insides of Nitrogen
@@ -127,7 +127,7 @@ class Mode_1:
 
         # Oxygen
         OxygenPosition = (NitrogenLength + TopChartPosition[0], TopChartPosition[1])
-        OxygenLength = 0.2 * TotalLength + Mode_1.TopData[Mode_1.Frame][1] # TODO this
+        OxygenLength = 0.2 * TotalLength + Mode_1.TopData[Mode_1.Frame][1]
         OxygenTotal = OxygenPosition + (OxygenLength, TopChartPosition[3])
 
         OxygenBox = pygame.Rect(OxygenTotal)  # Insides of Nitrogen

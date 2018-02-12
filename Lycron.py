@@ -63,7 +63,7 @@ Bad_Statuses = [
 ]
 
 Possible_Identification = ["POD", "BOT", "COM", "NANO", "LYC", "COMP", "Dom"]
-Rare_Possible_Identification = ["Colin", "Liam", "Grayson", "David", "Q", "Katy",
+Rare_Possible_Identification = ["Colin", "Liam", "Greyson", "David", "Q", "Katy",
                                "Grace", "Alyssa", "Serena", "Emily", "Christina", "Abby"]
 
 
