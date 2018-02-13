@@ -1,0 +1,54 @@
+This is the general guide on how to make a program auto start on a raspberry pi.
+
+1. CREATE A LAUNCHER.SH
+yes, you do have to do this. You are not above the law. 
+
+>>> cd ~/Desktop/Penumbra
+>>> nano launcher.sh
+
+Inside of that, write this: 
+
+> cd /
+> cd home/pi/Desktop/Penumbra
+> python3 Main.py
+> cd /   # Include this or face wrath!!!
+
+if you want to sleep/wait.
+> sleep 10   # in seconds, add to beginning
+
+Okay so now do this crap to make it executable
+
+>>> chmod 755 launcher.sh
+>>> sh launcher.sh            # Will test if it works
+
+
+1.5. LOGGER STUFF
+so you can tell where exactly you didn't follow my instructions
+
+>>> cd
+>>> mkdir logs
+
+
+2. ADD TO CRONTAB
+yes, you must use crontab. If you time it right, it won't matter what you use. Boots before desktop. 
+
+>>> sudo crontab -e
+
+Add this fabulous line to the end of the crontab list
+
+@reboot sh /home/pi/Desktop/Penumbra/launcher.sh >/home/pi/logs/cronlog 2>&1
+
+
+3. TEST HOW RIGHT THIS IS
+
+>>> sudo reboot
+
+
+4. FIND OUT WHICH STEP YOU SKIPPED
+
+>>> cd logs
+>>> cat cronlog
+
+
+5. REMINDERS
+- File system and external imports seem to be having trouble being up at this time during the startup. Good luck with that one. 
