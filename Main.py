@@ -7,7 +7,12 @@ import pygame
 import random
 import time
 import math
-import git, os, sys
+done = 0
+while done < 60:
+    try:
+        import git, os, sys
+    except:
+        time.sleep(1)
 import Helpers, Lycron, Yakim
 
 """ Modes
@@ -39,8 +44,9 @@ clock = pygame.time.Clock()
 # Set the height and width of the screen
 screen_width = 1280
 screen_height = 1080
-screen = pygame.display.set_mode([screen_width, screen_height])#, pygame.FULLSCREEN, 32)
-
+screen = pygame.display.set_mode()#, pygame.FULLSCREEN, 32)
+w, h = pygame.display.get_surface().get_size()
+screen = pygame.display.set_mode((w, h), pygame.FULLSCREEN)
 
 # For in the event loop
 def Key(event, key):
