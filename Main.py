@@ -9,11 +9,7 @@ import time
 import math
 try:
     import git, os, sys
-    done = 100
 except:
-    print(str(done))
-    time.sleep(1)
-    done += 1
     import os, sys
 import Helpers, Lycron, Yakim
 print("Completed")
