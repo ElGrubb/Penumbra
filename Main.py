@@ -9,11 +9,12 @@ import time
 import math
 try:
     import git, os, sys
+    monitor = False
 except:
+    monitor = True
     time.sleep(2)
     import os, sys
 import Helpers, Lycron, Yakim
-print("Completed")
 """ Modes
 0: Boot
 1: Initial Screens
@@ -43,9 +44,12 @@ clock = pygame.time.Clock()
 # Set the height and width of the screen
 screen_width = 1280
 screen_height = 1080
-screen = pygame.display.set_mode()#, pygame.FULLSCREEN, 32)
-w, h = pygame.display.get_surface().get_size()
-screen = pygame.display.set_mode((w, h), pygame.FULLSCREEN)
+if monitor:
+    screen = pygame.display.set_mode()#, pygame.FULLSCREEN, 32)
+    w, h = pygame.display.get_surface().get_size()
+    screen = pygame.display.set_mode((w, h), pygame.FULLSCREEN)
+elif not monitor:
+    screen = pygame.display.set_mode((screen_width, screen_height))
 
 # For in the event loop
 def Key(event, key):
@@ -188,6 +192,8 @@ while not done:
         if CountDown > 0:
             TimerRect = pygame.draw.rect(screen, Helpers.Color("Red"), (0, screen_height-30, int(screen_width*CountDown/300), 10))
 
+        if Frame % 15 == 0 and Frame != 0:  # Twice a Second
+            user.Navigator(mode=mode, unit=0.5)
         if Seconds % 5 == 0 and Frame == 0: # Once every 5 seconds
             user.Navigator(mode=mode, unit=5)
 

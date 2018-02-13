@@ -25,6 +25,9 @@ class Mode_1:
     BoxText = pygame.font.Font("Assets/Fonts/segoeuisl.ttf", 27)
     PercentText = pygame.font.Font("Assets/Fonts/segoeuisl.ttf", 20)
     YakimText = None
+    EmptyGraph = None
+
+    GraphValues = []
 
     TopData = []
 
@@ -63,6 +66,12 @@ class Mode_1:
             Mode_1.TopData.append(TopChartWork(i))
 
         Mode_1.YakimText = pygame.image.load('Assets/Yakim01.png')
+        Mode_1.EmptyGraph = pygame.image.load("Assets/EmptyGraph.png")
+
+        # Generate 14 values for GraphValues[]
+        for i in range(15):
+            Mode_1.GraphValues.append(Mode_1.CreateGraphPoints(mode=1))
+
         Mode_1.initiated = True
 
     @staticmethod
@@ -177,8 +186,38 @@ class Mode_1:
         Sys.screen.blit(OxyText, OxyPos)  # Blit it
 
     @staticmethod
-    def GenText():
-        pass
+    def CreateGraphPoints(mode=1, margin=(0, 350)):
+        """
+        Returns y value of node for point
+        """
+        if mode == 1:
+            mid = margin[1]/2
+            range = (mid-30, mid+30)
+            return random.randint(range[0], range[1])
+        elif mode == 2:
+            return random.int(margin[0], margin[1])
+
+    @staticmethod
+    def GenerateNewPoint():
+        del Mode_1.GraphValues[0]
+        Mode_1.GraphValues.append(Mode_1.CreateGraphPoints())
+
+    @staticmethod
+    def GenGraph():
+        Sys.screen.blit(Mode_1.EmptyGraph, (660, 600))
+        poslist = []
+        x_pos = 620
+
+        for point in Mode_1.GraphValues:
+            x_pos += 40
+            pos = (x_pos, 600 + point)
+            poslist.append(pos)
+
+        pygame.draw.lines(Sys.screen, Helpers.Color("Black"), False, poslist, 3)
+
+        for point in poslist:
+            circledpoint = pygame.draw.circle(Sys.screen, Helpers.Color("Blue"), point, 8)
+            circledpoint = pygame.draw.circle(Sys.screen, Helpers.Color("White"), point, 4)
 
     @staticmethod
     def Run():
@@ -198,6 +237,9 @@ class Mode_1:
         # Set up Topbar
         Mode_1.TopChart()  # Wowzers
 
+        # Chart
+        Mode_1.GenGraph()
+
 
 def Navigator(mode: int, unit=0):
     if mode == 1:
@@ -206,6 +248,5 @@ def Navigator(mode: int, unit=0):
 
         if not unit:
             Mode_1.Run()
-        elif unit == 5:
-            pass
-            # Mode_1.RandColorChange()
+        elif unit == 0.5:
+            Mode_1.GenerateNewPoint()
