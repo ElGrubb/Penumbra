@@ -9,6 +9,7 @@ import time
 import math
 done = 0
 while done < 60:
+    print(str(done))
     try:
         import git, os, sys
         done = 100
