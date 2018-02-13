@@ -29,6 +29,9 @@ class Mode_1:
 
     GraphValues = []
 
+    BBposition = (0, 1050)
+    BBimage = None
+
     TopData = []
 
     @staticmethod
@@ -71,6 +74,8 @@ class Mode_1:
         # Generate 14 values for GraphValues[]
         for i in range(15):
             Mode_1.GraphValues.append(Mode_1.CreateGraphPoints(mode=1))
+
+        Mode_1.BBimage = pygame.image.load('Assets/YakimBottomBar.png')
 
         Mode_1.initiated = True
 
@@ -195,12 +200,12 @@ class Mode_1:
             range = (mid-30, mid+30)
             return random.randint(range[0], range[1])
         elif mode == 2:
-            return random.int(margin[0], margin[1])
+            return random.randint(margin[0], margin[1])
 
     @staticmethod
     def GenerateNewPoint():
         del Mode_1.GraphValues[0]
-        Mode_1.GraphValues.append(Mode_1.CreateGraphPoints())
+        Mode_1.GraphValues.append(Mode_1.CreateGraphPoints(mode=1))
 
     @staticmethod
     def GenGraph():
@@ -218,6 +223,18 @@ class Mode_1:
         for point in poslist:
             circledpoint = pygame.draw.circle(Sys.screen, Helpers.Color("Blue"), point, 8)
             circledpoint = pygame.draw.circle(Sys.screen, Helpers.Color("White"), point, 4)
+
+        # Big Text
+        Text = "Cloud Pressure Variations"
+
+        TextWidth, TextHeight = Mode_1.BoxText.size(Text)  # Estimate size
+        TextPos = (660+int((580-TextWidth)/2), 600)
+        TextObj = Mode_1.BoxText.render(Text, True, (0, 0, 0))  # Create text object
+        Sys.screen.blit(TextObj, TextPos)  # Blit to screen
+
+    @staticmethod
+    def BottomBar():
+        Sys.screen.blit(Mode_1.BBimage, Mode_1.BBposition)
 
     @staticmethod
     def Run():
@@ -239,6 +256,8 @@ class Mode_1:
 
         # Chart
         Mode_1.GenGraph()
+
+        Mode_1.BottomBar()
 
 
 def Navigator(mode: int, unit=0):
