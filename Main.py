@@ -7,16 +7,14 @@ import pygame
 import random
 import time
 import math
-done = 0
-while done < 60:
+try:
+    import git, os, sys
+    done = 100
+except:
     print(str(done))
-    try:
-        import git, os, sys
-        done = 100
-    except:
-        print(str(done))
-        time.sleep(1)
-        done += 1
+    time.sleep(1)
+    done += 1
+    import os, sys
 import Helpers, Lycron, Yakim
 
 """ Modes
