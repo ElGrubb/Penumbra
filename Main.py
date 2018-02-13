@@ -12,7 +12,9 @@ while done < 60:
     try:
         import git, os, sys
     except:
+        print(str(done))
         time.sleep(1)
+        done += 1
 import Helpers, Lycron, Yakim
 
 """ Modes
