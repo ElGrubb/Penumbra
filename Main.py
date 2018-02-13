@@ -10,6 +10,7 @@ import math
 try:
     import git, os, sys
 except:
+    time.sleep(2)
     import os, sys
 import Helpers, Lycron, Yakim
 print("Completed")
