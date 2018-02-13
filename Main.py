@@ -16,7 +16,7 @@ except:
     done += 1
     import os, sys
 import Helpers, Lycron, Yakim
-
+print("Completed")
 """ Modes
 0: Boot
 1: Initial Screens
