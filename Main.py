@@ -11,6 +11,7 @@ done = 0
 while done < 60:
     try:
         import git, os, sys
+        done = 100
     except:
         print(str(done))
         time.sleep(1)
