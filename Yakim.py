@@ -281,6 +281,12 @@ class Mode_1:
             pygame.draw.circle(Sys.screen, Helpers.Color("Black"), point, 5)
             pygame.draw.circle(Sys.screen, Helpers.Color("DarkWhite"), point, 3)
 
+        Text = "Atmospheric Electrostatic Variations"
+        TextWidth, TextHeight = Mode_1.BoxText.size(Text)  # Estimate size
+        TextPos = (40 + int((580 - TextWidth) / 2), 560)
+        TextObj = Mode_1.BoxText.render(Text, True, (0, 0, 0))  # Create text object
+        Sys.screen.blit(TextObj, TextPos)  # Blit to screen
+
 
     @staticmethod
     def Run():
