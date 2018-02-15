@@ -52,13 +52,14 @@ class Mode_1:
             return round(Scale * sin, 3)
 
         # Use GraphSin() to generate WaterGraph and CarbonGraph Values
-        for i in range(Mode_1.TotalFrames):
-            Mode_1.WaterGraphValues.append(round(GraphSin(150, i, 10)))
+        for i in range(Mode_1.TotalFrames):  # For each of the grames
+            Mode_1.WaterGraphValues.append(round(GraphSin(150, i, 10)))  # Create Water normal Values
             Mode_1.CarbonGraphValues.append(round(GraphSin(50, i, 3)))
             Mode_1.HumGraphValues.append(round(GraphSin(300, i, 8, UseThird=1)))
 
-        def TopChartWork(Frame):
-            Nitrogen = math.radians((360 / 300) * Frame)
+        def TopChartWork(Frame):  # Create the positions of the Nitrogen and Oxygen necessary
+            # Takes in the Frame number and returns the percentage of each Nitrogen and Oxygen
+            Nitrogen = math.radians((360 / 300) * Frame)  # Based on the Frame Int
             Oxygen = math.radians(2*(360 / 300) * Frame)
 
             f_Nitrogen = round(10 * math.sin(Nitrogen))
@@ -66,14 +67,14 @@ class Mode_1:
 
             return (f_Nitrogen, f_Oxygen)
 
-        for i in range(Mode_1.TotalFrames):
-            Mode_1.TopData.append(TopChartWork(i))
+        for i in range(Mode_1.TotalFrames):  # For each of the frames 
+            Mode_1.TopData.append(TopChartWork(i))  # Add to the TopRow cycle values
 
         Mode_1.YakimText = pygame.image.load('Assets/Yakim01.png')
         Mode_1.EmptyGraph = pygame.image.load("Assets/EmptyGraph.png")
 
-        # Generate 14 values for GraphValues[]
-        for i in range(15):
+        # Generate 14 values for GraphValues[] for the actual graph
+        for i in range(15):  # this is so there are values when the graph starts graphing
             Mode_1.GraphValues.append(Mode_1.CreateGraphPoints(mode=1))
 
         Mode_1.BBimage = pygame.image.load('Assets/YakimBottomBar.png')
@@ -241,51 +242,60 @@ class Mode_1:
     def Radar():
         center = (330, 800)
         radius = 200
+            # Create the general outline of the radar
         pygame.draw.circle(Sys.screen, Helpers.Color("DarkWhite"), center, radius)
         pygame.draw.circle(Sys.screen, Helpers.Color("White"), center, radius, 8)
         pygame.draw.circle(Sys.screen, Helpers.Color("Black"), center, radius, 4)
 
+            # Generate the sweeping line
         Radians = math.radians(Mode_1.Frame/300*360)
         Coords = (round(200 * math.cos(Radians)), round(200 * math.sin(Radians)))
         final_Coords = (center[0] + Coords[0], center[1] + Coords[1])
-
-        pygame.draw.line(Sys.screen, Helpers.Color("Black"), center, final_Coords, 7)
-        pygame.draw.line(Sys.screen, Helpers.Color("White"), center, final_Coords, 2)
-
+        
+        # Draw positioning lines
         pygame.draw.line(Sys.screen, Helpers.Color("Black"), (center[0], center[1]-radius),
                          (center[0], center[1]+radius))
         pygame.draw.line(Sys.screen, Helpers.Color("Black"), (center[0] - radius, center[1]),
                          (center[0] + radius, center[1]))
-
+        
+            # Draw the Sweeping Line
+        pygame.draw.line(Sys.screen, Helpers.Color("Black"), center, final_Coords, 7)
+        pygame.draw.line(Sys.screen, Helpers.Color("White"), center, final_Coords, 2)
+            
+            # Draw circle in the center
         pygame.draw.circle(Sys.screen, Helpers.Color("Black"), center, 10)
         pygame.draw.circle(Sys.screen, Helpers.Color("DarkWhite"), center, 8)
 
         # Generate a few random points
-        if Mode_1.Frame % 60 == 0:
+        if Mode_1.Frame % 60 == 0:  # Every 2 seconds
             dummy_list = []
-            for point in Mode_1.RadarPoints:
+            for point in Mode_1.RadarPoints:  # For every established point
                 if random.randint(0, 1):   # 50% chance itll keep that point
                     dummy_list.append(point)
 
-            for i in range(10-len(dummy_list)):  # Make the actual points
-                angle = math.radians(random.randint(0, 360))
-                scale = random.randint(20, 180)
-                Coords = (round(scale * math.cos(angle)), round(scale * math.sin(angle)))
-                final_Coords = (center[0] + Coords[0], center[1] + Coords[1])
+            # Limits them to 10 points. Fills in remaining points. 
+            for i in range(10-len(dummy_list)):  # Make the extra points
+                angle = math.radians(random.randint(0, 360))  # Random angle
+                scale = random.randint(20, 180)  # Random Vector Length
+                Coords = (round(scale * math.cos(angle)), round(scale * math.sin(angle)))  # Generate Coords based on those two
+                final_Coords = (center[0] + Coords[0], center[1] + Coords[1])  # Set with (0, 0) in the center of the graph
 
-                dummy_list.append(final_Coords)
+                dummy_list.append(final_Coords)  # Add the new coord
 
-            Mode_1.RadarPoints = dummy_list
+            Mode_1.RadarPoints = dummy_list  # Save this list
 
-        for point in Mode_1.RadarPoints:
-            pygame.draw.circle(Sys.screen, Helpers.Color("Black"), point, 5)
-            pygame.draw.circle(Sys.screen, Helpers.Color("DarkWhite"), point, 3)
+        for point in Mode_1.RadarPoints:  # For each point created / established
+            pygame.draw.circle(Sys.screen, Helpers.Color("Black"), point, 5)  # Create Black Outline
+            pygame.draw.circle(Sys.screen, Helpers.Color("DarkWhite"), point, 3)  # Create Inside white
 
-        Text = "Atmospheric Electrostatic Variations"
+            # Create Text to show abovewards
+        Text = "Atmospheric Electrostatic Variations"  
         TextWidth, TextHeight = Mode_1.BoxText.size(Text)  # Estimate size
         TextPos = (40 + int((580 - TextWidth) / 2), 560)
         TextObj = Mode_1.BoxText.render(Text, True, (0, 0, 0))  # Create text object
         Sys.screen.blit(TextObj, TextPos)  # Blit to screen
+        
+        return
 
 
     @staticmethod
