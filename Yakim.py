@@ -33,6 +33,7 @@ class Mode_1:
     BBimage = None
 
     TopData = []
+    RadarPoints = []
 
     @staticmethod
     def init():
@@ -237,6 +238,51 @@ class Mode_1:
         Sys.screen.blit(Mode_1.BBimage, Mode_1.BBposition)
 
     @staticmethod
+    def Radar():
+        center = (330, 800)
+        radius = 200
+        pygame.draw.circle(Sys.screen, Helpers.Color("DarkWhite"), center, radius)
+        pygame.draw.circle(Sys.screen, Helpers.Color("White"), center, radius, 8)
+        pygame.draw.circle(Sys.screen, Helpers.Color("Black"), center, radius, 4)
+
+        Radians = math.radians(Mode_1.Frame/300*360)
+        Coords = (round(200 * math.cos(Radians)), round(200 * math.sin(Radians)))
+        final_Coords = (center[0] + Coords[0], center[1] + Coords[1])
+
+        pygame.draw.line(Sys.screen, Helpers.Color("Black"), center, final_Coords, 7)
+        pygame.draw.line(Sys.screen, Helpers.Color("White"), center, final_Coords, 2)
+
+        pygame.draw.line(Sys.screen, Helpers.Color("Black"), (center[0], center[1]-radius),
+                         (center[0], center[1]+radius))
+        pygame.draw.line(Sys.screen, Helpers.Color("Black"), (center[0] - radius, center[1]),
+                         (center[0] + radius, center[1]))
+
+        pygame.draw.circle(Sys.screen, Helpers.Color("Black"), center, 10)
+        pygame.draw.circle(Sys.screen, Helpers.Color("DarkWhite"), center, 8)
+
+        # Generate a few random points
+        if Mode_1.Frame % 60 == 0:
+            dummy_list = []
+            for point in Mode_1.RadarPoints:
+                if random.randint(0, 1):   # 50% chance itll keep that point
+                    dummy_list.append(point)
+
+            for i in range(10-len(dummy_list)):  # Make the actual points
+                angle = math.radians(random.randint(0, 360))
+                scale = random.randint(20, 180)
+                Coords = (round(scale * math.cos(angle)), round(scale * math.sin(angle)))
+                final_Coords = (center[0] + Coords[0], center[1] + Coords[1])
+
+                dummy_list.append(final_Coords)
+
+            Mode_1.RadarPoints = dummy_list
+
+        for point in Mode_1.RadarPoints:
+            pygame.draw.circle(Sys.screen, Helpers.Color("Black"), point, 5)
+            pygame.draw.circle(Sys.screen, Helpers.Color("DarkWhite"), point, 3)
+
+
+    @staticmethod
     def Run():
         if Mode_1.Frame >= 300:  # For all the circular motion, ensure it knows the correct frame
             Mode_1.Frame = 0
@@ -256,6 +302,7 @@ class Mode_1:
 
         # Chart
         Mode_1.GenGraph()
+        Mode_1.Radar()
 
         Mode_1.BottomBar()
 
