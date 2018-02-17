@@ -31,8 +31,8 @@ import Helpers, Lycron, Yakim, Rouak
 
 # Important Variables
 FrameRate = 30
-Name = "Rouak"
-mode = 0    # Starting Mode!
+Name = "Lycron"
+mode = 5    # Starting Mode!
 bootSeconds = 1  # How many seconds to wait before booting
 EscapeTime = 3   # How many seconds to wait before escaping
 
@@ -50,6 +50,17 @@ if monitor:
     screen = pygame.display.set_mode((w, h), pygame.FULLSCREEN)
 elif not monitor:
     screen = pygame.display.set_mode((screen_width, screen_height))
+
+# Set the file that will be used based on the person
+if Name == "Lycron":
+    user = Lycron
+elif Name == "Yakim":
+    user = Yakim
+elif Name == "Rouak":
+    user = Rouak
+user.Sys.screen = screen
+user.Sys.screen_height, user.screen_width = screen_height, screen_width
+user.Sys.FrameRate = FrameRate
 
 # For in the event loop
 def Key(event, key):
@@ -69,7 +80,7 @@ def Key(event, key):
             return True
     return False
 
-
+# Sets up the User's TaskBar
 class TaskBar:
     """
     A class containing the functions for the taskbar to be created and blitted. 
@@ -122,6 +133,7 @@ class TaskBar:
                 EscapeWords = TaskBar.Font_SegoeUI.render("Escape", True, (0, 0, 0))  # Render the Profile Name
                 screen.blit(EscapeWords, (EscapeLocation+5, 0))  # Blit the name 5pix next to the icon
 
+# The Small Loading Screen
 class Boot:
     counter = 0
     Font_SegoeUI = pygame.font.Font("Assets/Fonts/segoeui.ttf", 5000)
@@ -143,24 +155,110 @@ class Boot:
         else:
             return True
 
+# The "Restarting" Phase
+class Mode_5:
+    data = None
+    SegoeUI_20 = Helpers.Font.GetFont(20)
+    SegoeUI_50 = Helpers.Font.GetFont(50)
+    SegoeUI_100 = Helpers.Font.GetFont(100)
+    SegoeUI_125i = Helpers.Font.GetFont(125, italics=True)
+    SegoeUI_100sli = Helpers.Font.GetFont(100, semilight=True, italics=True)
+    initiated = False
+
+    PreviousText = []
+
+    LoadingPercentage = 0
+    PercentageSpeed = 80
+    PercentageText = "Restarting"
+    PercentageColor = Helpers.Color("RedOrange")
+
+    @staticmethod
+    def init():
+        Mode_5.data = user.Mode_5.data  # Retrieve data from user
+
+        Mode_5.initiated = True
+        return
+
+    @staticmethod
+    def Background():
+        screen.fill(Helpers.Color("LightGray"))
+        WhiteBox = pygame.Rect((140, 140, 1000, 800))  # Set the Background for the taskbar rect
+        pygame.draw.rect(screen, Helpers.Color("White"), WhiteBox, 0)
+        pygame.draw.rect(screen, Helpers.Color("Black"), WhiteBox, 5)
+
+        PodOS_text = "PodOS"
+        Helpers.CenterText(PodOS_text, Mode_5.SegoeUI_100, (0, 1280), 140-10, screen, (0, 0, 0))
+        end_y = Helpers.CenterText(Mode_5.data["System"], Mode_5.SegoeUI_125i, (0, 1280), 210, screen, (0, 0, 0))
+
+        line = pygame.draw.line(screen, (0, 0, 0), (140, end_y), (1140, end_y), 5)
+
+    @staticmethod
+    def Text():
+        # Add some machine text
+        rows = 17
+        pos = (150, 400, 1000)
+        Delay = 5
+        ChatWidth = 1000
+
+        if random.randrange(Delay) == 1:  # 1/5 chance of text occuring! This way theres no pattern
+            Mode_5.PreviousText.append(
+                Helpers.randstr(100, 15))  # Generates random strings
+
+        if len(Mode_5.PreviousText) > rows:  # Limit the number of things said so there's no excess lines
+            del Mode_5.PreviousText[0]
+
+        # Generate text objects now
+        printList = []  # List of the objects
+        CurrentDistance = -90  # How far down the scren we have gone
+        for line in Mode_5.PreviousText:  # For each line in it
+            # Iterates through each line of text, formatting it and adding to printList
+            while Mode_5.SegoeUI_20.size(line)[0] > ChatWidth:  # Ensures each is not too long
+                line = line[0:len(line) - 1]  # If it is, removes 1 from it until it's not too long
+            ChatText = Mode_5.SegoeUI_20.render(line, True, (0, 0, 0))  # Create the text
+            screen.blit(ChatText, (pos[0], pos[1] + 70 + CurrentDistance))  # Add to the Sys.screen
+
+            CurrentDistance += Mode_5.SegoeUI_20.size(line)[1] - 5  # Create new distance
+
+    @staticmethod
+    def LoadingText():
+        add_to_loading = random.randrange(Mode_5.PercentageSpeed)
+        Mode_5.LoadingPercentage += add_to_loading/100
+        if Mode_5.LoadingPercentage >= 100:
+            Mode_5.LoadingPercentage = 0
+            Mode_5.PercentageSpeed = random.choice([75, 50, 125, 100, 25, 78, 80])
+            Mode_5.PercentageText = random.choice(Mode_5.data["Dialogue"])
+            Mode_5.PercentageColor = Helpers.Color(random.choice(["RedOrange", "Blue", "Green", "Yellow"]))
+
+        x = int(800 * Mode_5.LoadingPercentage/100)
+        PercentagePos = (240, 840, x, 80)
+        PercentageBox = pygame.Rect(PercentagePos)  # Set the Background for the taskbar rect
+        pygame.draw.rect(screen, Mode_5.PercentageColor, PercentageBox)
+
+        OutlineBox = pygame.Rect((240, 840, 800, 80))  # Set the Background for the taskbar rect
+        pygame.draw.rect(screen, Helpers.Color("Black"), OutlineBox, 3)
+
+        Helpers.CenterText(Mode_5.PercentageText, Mode_5.SegoeUI_50, (0, 1280), 775, screen, (0, 0, 0))
+
+
+
+
+    @staticmethod
+    def run():
+        if not Mode_5.initiated:
+            Mode_5.init()
+
+        Mode_5.Background()
+        Mode_5.Text()
+        Mode_5.LoadingText()
+
+        return
+
+
 # Initiate Important Blitting Functions
 TaskBar.init()
 Boot.init()
 
-# Set the file that will be used based on the person
-if Name == "Lycron":
-    user = Lycron
-elif Name == "Yakim":
-    user = Yakim
-elif Name == "Rouak":
-    user = Rouak
-user.Sys.screen = screen
-user.Sys.screen_height, user.screen_width = screen_height, screen_width
-user.Sys.FrameRate = FrameRate
-
-
 # Variables for loop
-mode = 0
 done = False
 CountDown = 0
 Frame = 0
@@ -199,6 +297,9 @@ while not done:
             user.Navigator(mode=mode, unit=2)
         if Seconds % 5 == 0 and Frame == 0: # Once every 5 seconds
             user.Navigator(mode=mode, unit=5)
+
+    if mode == 5:
+        Mode_5.run()
 
     elif mode == 0:
         if not Boot.Start():

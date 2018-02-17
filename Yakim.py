@@ -22,8 +22,8 @@ class Mode_1:
     CarbonGraphValues = []  # Should also be around 300 values
     HumGraphValues = []     # Around 150 as well
 
-    BoxText = pygame.font.Font("Assets/Fonts/segoeuisl.ttf", 27)
-    PercentText = pygame.font.Font("Assets/Fonts/segoeuisl.ttf", 20)
+    BoxText = Helpers.Font.GetFont(27, semilight=True)
+    PercentText = Helpers.Font.GetFont(20, semilight=True)
     YakimText = None
     EmptyGraph = None
 

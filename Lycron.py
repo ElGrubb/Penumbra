@@ -62,10 +62,6 @@ Bad_Statuses = [
     "Lost connection to host. Retrying 12.02/s"
 ]
 
-Possible_Identification = ["POD", "BOT", "COM", "NANO", "LYC", "COMP", "Dom"]
-Rare_Possible_Identification = ["Colin", "Liam", "Greyson", "David", "Q", "Katy", 'Mallory',
-                               "Grace", "Alyssa", "Serena", "Emily", "Christina", "Abby"]
-
 
 class Mode_1:
     """
@@ -89,8 +85,8 @@ class Mode_1:
     Lycron03 = None
     LycronImages = [Lycron00, Lycron01, Lycron02, Lycron03]
     CurrentImage = 0
-    SegoeUI_Small = pygame.font.Font("Assets/Fonts/segoeui.ttf", 15)
-    SemiboldSegoeUI_Small = pygame.font.Font("Assets/Fonts/seguisb.ttf", 15)
+    SegoeUI_Small = Helpers.Font.GetFont(15)
+    SemiboldSegoeUI_Small = Helpers.Font.GetFont(15, bold=1)
     StatusList = []
     BBposition = (0, 1050)
     BBimage = None
@@ -98,7 +94,7 @@ class Mode_1:
     @staticmethod
     def init():
         # Start up all the image files necessary
-        Mode_1.Font_ChatWindow = pygame.font.Font("Assets/Fonts/segoeui.ttf", Mode_1.Font_Width)
+        Mode_1.Font_ChatWindow = Helpers.Font.GetFont(Mode_1.Font_Width)
         Mode_1.PossibleRows = math.floor(Mode_1.ChatHeight / (Mode_1.Font_ChatWindow.size("Mode_1")[1] - 10)) - 11
 
         Mode_1.Lycron00 = pygame.image.load('Assets/Lycron00.png')
@@ -109,7 +105,7 @@ class Mode_1:
 
         # Generate Starting Text rows
         for i in range(Mode_1.PossibleRows):
-            Mode_1.PreviousText.append(Mode_1.randstr(Mode_1.String_Length))  # Generates random strings
+            Mode_1.PreviousText.append(Helpers.randstr(Mode_1.String_Length, Mode_1.String_Variation))  # Generates random strings
 
         # Generate the Status Lists that'll be used
         StartingStatusPosition = Mode_1.StatusPositionY
@@ -121,28 +117,6 @@ class Mode_1:
 
         Mode_1.initiated = True
 
-    @staticmethod
-    def randstr(length):  # HELPER FUNCTION
-        """
-        Create a random string of characters under a specific length
-        :param length: How long the max string can be
-        :return: The string
-        """
-        string = ''
-        characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ      1234567890      abcdefghijklmnopqrstuvwxyz.!/"  # Characters to use
-        for i in range(0, length):  # For each character until the length
-            string += random.choice(characters)  # Add a random character
-
-        # Add Identification:
-        if random.randint(0,30) < 3:
-            character_name = random.choice(Rare_Possible_Identification)
-        else:
-            character_name = random.choice(Possible_Identification)
-        string = character_name + " " + str(random.randrange(999)) + ":   " + string
-        string = string[0:length]
-
-        string = string[0:len(string)-random.randrange(Mode_1.String_Variation)].strip()  # Remove a bit from the end to make it random length
-        return string
 
     @staticmethod
     def Text(mode=1):
@@ -158,7 +132,7 @@ class Mode_1:
 
         # Add some dialogue
         if random.randrange(Delay) == 1: # 1/7 chance of text occuring! This way theres no pattern
-            Mode_1.PreviousText.append(Mode_1.randstr(Mode_1.String_Length))  # Generates random strings
+            Mode_1.PreviousText.append(Helpers.randstr(Mode_1.String_Length, Mode_1.String_Variation))  # Generates random strings
 
         if len(Mode_1.PreviousText) > Mode_1.PossibleRows:  # Limit the number of things said so there's no excess lines
             del Mode_1.PreviousText[0]
@@ -315,6 +289,14 @@ class Mode_1:
         Mode_1.Images()
         Mode_1.BottomBar()
 
+
+class Mode_5:
+    data = {
+        "System": "Communications",
+        "Dialogue": ["Configuring R.A.M. Communcaitons",
+                     "Rewriting Database",
+                     "Establishing Secure Connections"]
+    }
 
 def Navigator(mode: int, unit=0):
 
