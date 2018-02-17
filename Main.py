@@ -122,7 +122,6 @@ class TaskBar:
                 EscapeWords = TaskBar.Font_SegoeUI.render("Escape", True, (0, 0, 0))  # Render the Profile Name
                 screen.blit(EscapeWords, (EscapeLocation+5, 0))  # Blit the name 5pix next to the icon
 
-
 class Boot:
     counter = 0
     Font_SegoeUI = pygame.font.Font("Assets/Fonts/segoeui.ttf", 5000)
@@ -196,6 +195,8 @@ while not done:
 
         if Frame % 15 == 0 and Frame != 0:  # Twice a Second
             user.Navigator(mode=mode, unit=0.5)
+        if Seconds % 5 == 0 and Frame == 0:  # Once every 2 seconds
+            user.Navigator(mode=mode, unit=2)
         if Seconds % 5 == 0 and Frame == 0: # Once every 5 seconds
             user.Navigator(mode=mode, unit=5)
 
