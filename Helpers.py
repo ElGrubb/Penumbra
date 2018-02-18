@@ -30,7 +30,8 @@ def Color(name):
 
 Possible_Identification = ["POD", "BOT", "COM", "NANO", "LYC", "COMP", "Dom"]
 Rare_Possible_Identification = ["Colin", "Liam", "Greyson", "David", "Q", "Katy", 'Mallory',
-                               "Grace", "Alyssa", "Serena", "Emily", "Christina", "Abby"]
+                               "Grace", "Alyssa", "Serena", "Emily", "Christina", "Abby",
+                                "Raden", "Molly", "Michaela"]
 
 
 def randstr(length, variation):  # HELPER FUNCTION

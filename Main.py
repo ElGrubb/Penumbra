@@ -3,6 +3,8 @@ Main file of each setup. Will eventually have login and bootup.
 Redirects based on what character computer it is.
 """
 # TODO Login and Bootup
+# TODO More FAILED screens
+# TODO PERCENTAGE ON MODE_5
 import pygame
 import random
 import time
@@ -32,7 +34,7 @@ import Helpers, Lycron, Yakim, Rouak, Alyns
 # Important Variables
 FrameRate = 30
 Name = "Alyns"
-mode = 0    # Starting Mode!
+mode = 5    # Starting Mode!
 bootSeconds = 1  # How many seconds to wait before booting
 EscapeTime = 3   # How many seconds to wait before escaping
 
@@ -164,6 +166,7 @@ class Boot:
 class Mode_5:
     data = None
     SegoeUI_20 = Helpers.Font.GetFont(20)
+    SegoeUI_35 = Helpers.Font.GetFont(35)
     SegoeUI_50 = Helpers.Font.GetFont(50)
     SegoeUI_100 = Helpers.Font.GetFont(100)
     SegoeUI_125i = Helpers.Font.GetFont(125, italics=True)
@@ -178,13 +181,19 @@ class Mode_5:
     PercentageColor = Helpers.Color("RedOrange")
 
     Failure = None
-    ShowingFailure = 0
+    ShowingFailure = {"showing": None, "time": 0}
+
+    Denied = None
+    Error = None
+
 
     @staticmethod
     def init():
         Mode_5.data = user.Mode_5.data  # Retrieve data from user
 
         Mode_5.Failure = pygame.image.load('Assets/Failure.png')
+        Mode_5.Denied = pygame.image.load('Assets/Denied.png')
+        Mode_5.Error = pygame.image.load('Assets/Error.png')
         Mode_5.initiated = True
         return
 
@@ -230,32 +239,50 @@ class Mode_5:
 
     @staticmethod
     def LoadingText():
-        add_to_loading = random.randrange(Mode_5.PercentageSpeed)
-        Mode_5.LoadingPercentage += add_to_loading/100
-        if Mode_5.LoadingPercentage >= 100:
-            Mode_5.LoadingPercentage = 0
-            Mode_5.PercentageSpeed = random.choice([75, 50, 125, 100, 25, 78, 80])
-            Mode_5.PercentageText = random.choice(Mode_5.data["Dialogue"])
-            Mode_5.PercentageColor = Helpers.Color(random.choice(["RedOrange", "Blue", "Green", "Yellow"]))
+        add_to_loading = random.randrange(Mode_5.PercentageSpeed)  # Add a random amount each time
+        Mode_5.LoadingPercentage += add_to_loading/100  # Add to the loading bar
 
-            Mode_5.ShowingFailure = 90
+        if Mode_5.LoadingPercentage >= 100:  # If the loading bar is above 100%
+            Mode_5.LoadingPercentage = 0  # Set to 0
+            Mode_5.PercentageSpeed = random.choice([75, 50, 125, 100, 25, 78, 80])  # Set next time's speed
+            Mode_5.PercentageText = random.choice(Mode_5.data["Dialogue"])  # Change text
+            Mode_5.PercentageColor = Helpers.Color(random.choice(["RedOrange", "Blue", "Green", "Yellow"])) # Change color
 
-        x = int(800 * Mode_5.LoadingPercentage/100)
-        PercentagePos = (240, 840, x, 80)
+            Mode_5.ShowingFailure["showing"] = random.choice([Mode_5.Failure, Mode_5.Error, Mode_5.Denied])
+            Mode_5.ShowingFailure["time"] = 90  # Show the failure message for 3 seconds (90 frames)
+
+        # Arrange the colored box
+        x_pos = int(800 * Mode_5.LoadingPercentage/100)
+        PercentagePos = (240, 840, x_pos, 80)
         PercentageBox = pygame.Rect(PercentagePos)  # Set the Background for the taskbar rect
         pygame.draw.rect(screen, Mode_5.PercentageColor, PercentageBox)
 
+        # Draw the Outline
         OutlineBox = pygame.Rect((240, 840, 800, 80))  # Set the Background for the taskbar rect
         pygame.draw.rect(screen, Helpers.Color("Black"), OutlineBox, 3)
+        pygame.draw.line(screen, Helpers.Color("Black"), (x_pos + 240, 840), (x_pos + 240, 840 + 80), 3)
 
+        # Add the Text
         Helpers.CenterText(Mode_5.PercentageText, Mode_5.SegoeUI_50, (0, 1280), 775, screen, (0, 0, 0))
 
-        if Mode_5.ShowingFailure:
-            Mode_5.ShowingFailure -= 1
-            screen.blit(Mode_5.Failure, (265, 450))
+        # Add Percentage Text
+        PercentageText = str(round(Mode_5.LoadingPercentage, 1)) + "%"
+        PercentageWidth, PercentageHeight = Mode_5.SegoeUI_35.size(PercentageText)
+        if Mode_5.LoadingPercentage > 50:
+            pos = (x_pos + 240 - PercentageWidth - 5, 855)
+        else:
+            pos = (x_pos + 240 + 5, 855)
 
+        # Actually Show the text
+        PercentageTextBox = Mode_5.SegoeUI_35.render(PercentageText, True, (0, 0, 0))  # Create the text
+        screen.blit(PercentageTextBox, pos)  # Add to the Sys.screen
 
+        # If there's a failure message to be shown
+        if Mode_5.ShowingFailure["time"]:
+            Mode_5.ShowingFailure["time"] -= 1
+            screen.blit(Mode_5.ShowingFailure["showing"], (265, 450))
 
+        return
 
     @staticmethod
     def run():
