@@ -293,9 +293,17 @@ class Mode_1:
 class Mode_5:
     data = {
         "System": "Communications",
-        "Dialogue": ["Configuring R.A.M. Communcaitons",
+        "Dialogue": ["Configuring R.A.M. Communcations",
                      "Rewriting Database",
-                     "Establishing Secure Connections"]
+                     "Establishing Secure Connections",
+                     "Connecting to Nanobots",
+                     "Downloading Latest API",
+                     "Creating Objects",
+                     "Managing Databases",
+                     "Rewriting History",
+                     "Saying Hi to Grace",
+                     "Waiting for Server to Respond",
+                     "Connecting to Wifi"]
     }
 
 def Navigator(mode: int, unit=0):

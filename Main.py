@@ -14,7 +14,7 @@ except:
     monitor = True
     time.sleep(2)
     import os, sys
-import Helpers, Lycron, Yakim, Rouak
+import Helpers, Lycron, Yakim, Rouak, Alyns
 """ Modes
 0: Boot
 1: Initial Screens
@@ -31,8 +31,8 @@ import Helpers, Lycron, Yakim, Rouak
 
 # Important Variables
 FrameRate = 30
-Name = "Lycron"
-mode = 5    # Starting Mode!
+Name = "Alyns"
+mode = 0    # Starting Mode!
 bootSeconds = 1  # How many seconds to wait before booting
 EscapeTime = 3   # How many seconds to wait before escaping
 
@@ -58,6 +58,12 @@ elif Name == "Yakim":
     user = Yakim
 elif Name == "Rouak":
     user = Rouak
+elif Name == "Alyns":
+    user = Alyns
+elif Name == "Usetha":
+    user = Usetha
+elif Name == "Mainframe":
+    user = Mainframe
 user.Sys.screen = screen
 user.Sys.screen_height, user.screen_width = screen_height, screen_width
 user.Sys.FrameRate = FrameRate
@@ -95,7 +101,7 @@ class TaskBar:
         Sets up the images in the TaskBar class
         """
         TaskBar.ProfileIcon = pygame.image.load('Assets/ProfileIcon.png')
-        TaskBar.Font_SegoeUI = pygame.font.Font("Assets/Fonts/segoeui.ttf", 30)
+        TaskBar.Font_SegoeUI = Helpers.Font.GetFont(30)
         TaskBar.SearchBar = pygame.image.load('Assets/Search.png')
 
     @staticmethod
@@ -136,7 +142,6 @@ class TaskBar:
 # The Small Loading Screen
 class Boot:
     counter = 0
-    Font_SegoeUI = pygame.font.Font("Assets/Fonts/segoeui.ttf", 5000)
     PODName = None
     @staticmethod
     def init():
@@ -172,10 +177,14 @@ class Mode_5:
     PercentageText = "Restarting"
     PercentageColor = Helpers.Color("RedOrange")
 
+    Failure = None
+    ShowingFailure = 0
+
     @staticmethod
     def init():
         Mode_5.data = user.Mode_5.data  # Retrieve data from user
 
+        Mode_5.Failure = pygame.image.load('Assets/Failure.png')
         Mode_5.initiated = True
         return
 
@@ -229,6 +238,8 @@ class Mode_5:
             Mode_5.PercentageText = random.choice(Mode_5.data["Dialogue"])
             Mode_5.PercentageColor = Helpers.Color(random.choice(["RedOrange", "Blue", "Green", "Yellow"]))
 
+            Mode_5.ShowingFailure = 90
+
         x = int(800 * Mode_5.LoadingPercentage/100)
         PercentagePos = (240, 840, x, 80)
         PercentageBox = pygame.Rect(PercentagePos)  # Set the Background for the taskbar rect
@@ -238,6 +249,10 @@ class Mode_5:
         pygame.draw.rect(screen, Helpers.Color("Black"), OutlineBox, 3)
 
         Helpers.CenterText(Mode_5.PercentageText, Mode_5.SegoeUI_50, (0, 1280), 775, screen, (0, 0, 0))
+
+        if Mode_5.ShowingFailure:
+            Mode_5.ShowingFailure -= 1
+            screen.blit(Mode_5.Failure, (265, 450))
 
 
 

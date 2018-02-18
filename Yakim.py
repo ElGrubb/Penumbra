@@ -323,6 +323,15 @@ class Mode_1:
         Mode_1.BottomBar()
 
 
+class Mode_5:
+    data = {
+        "System": "Atmospherics",
+        "Dialogue": ["Scanning for Clouds", "Checking Radar",
+                     "Calculating Storm Percentages", "Checking Rain Requirements",
+                     "Regulating Temperature", "Deploying Major Correctment",
+                     "Accelorating Desert Storm", "Rebooting to Mainframe"]
+    }
+
 def Navigator(mode: int, unit=0):
     if mode == 1:
         if not Mode_1.initiated:

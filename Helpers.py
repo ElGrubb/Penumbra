@@ -57,6 +57,18 @@ def randstr(length, variation):  # HELPER FUNCTION
     return string
 
 
+def IdealRandStr(length, UseCaps = False):
+    string = ""
+    if UseCaps:
+        useList = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
+    else:
+        useList = "abcdefghijklmnopqrstuvwxyz"
+    for i in range(length):
+        string += random.choice(useList)
+
+    return string
+
+
 def CenterText(text, font, x_range, y, screen, color):
     text_width, text_height = font.size(text)
     text_x = int((x_range[1] - x_range[0])/2)

@@ -66,6 +66,16 @@ class Mode_1:
         Mode_1.ShowScreens()
 
 
+class Mode_5:
+    data = {
+        "System": "Security",
+        "Dialogue": ["Closing 184", "Connecting to Cameras",
+                     "Finding Cool Stock Footage", "Connecting to NSA POD",
+                     "Making Witty Jokes", "Establishing Secure Connections",
+                     "Holy Shit It's Snowing, Liam", "Rewriting Code"]
+    }
+
+
 def Navigator(mode: int, unit=0):
     if mode == 1:
         if not Mode_1.initiated:
