@@ -34,7 +34,7 @@ import Helpers, Lycron, Yakim, Rouak, Alyns
 # Important Variables
 FrameRate = 30
 Name = "Alyns"
-mode = 5    # Starting Mode!
+mode = 0    # Starting Mode!
 bootSeconds = 1  # How many seconds to wait before booting
 EscapeTime = 3   # How many seconds to wait before escaping
 
