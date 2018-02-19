@@ -206,7 +206,7 @@ class Mode_1:
             mid = margin[1]/2
             range = (mid-30, mid+30)
             return random.randint(range[0], range[1])
-        elif mode == 1.5:
+        elif mode == 2:
             return random.randint(margin[0], margin[1])
 
     @staticmethod
@@ -281,7 +281,7 @@ class Mode_1:
                 if random.randint(0, 1):   # 50% chance itll keep that point
                     dummy_list.append(point)
 
-            if Mode_1.mode == 1.5:
+            if Mode_1.mode == 2:
                 limit = random.randint(10, 30)
             elif Mode_1.mode == 1:
                 limit = 10
@@ -322,7 +322,7 @@ class Mode_1:
             Mode_1.CarbonGraphValues[i] = Mode_1.CarbonGraphValues[i] * 3
             Mode_1.HumGraphValues[i] = Mode_1.HumGraphValues[i] * 3
 
-        Mode_1.mode = 1.5
+        Mode_1.mode = 2
         Mode_1.Advanced = True
         print("Beginning Cataclysm")
 
@@ -361,13 +361,13 @@ class Mode_5:
     }
 
 def Navigator(mode: int, unit=0):
-    if mode == 1 or mode == 1.5:
+    if mode == 1 or mode == 2:
         if not Mode_1.initiated:
             Mode_1.init()
 
         if not unit:
             Mode_1.Run()
-            if mode == 1.5:
+            if mode == 2:
                 Mode_1.Advance()
         elif unit == 0.5:
             Mode_1.GenerateNewPoint()

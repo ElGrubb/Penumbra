@@ -33,7 +33,7 @@ import Helpers, Lycron, Yakim, Rouak, Alyns
 
 # Important Variables
 FrameRate = 30
-Name = "Yakim"
+Name = "Lycron"
 mode = 0    # Starting Mode!
 bootSeconds = 1  # How many seconds to wait before booting
 EscapeTime = 3   # How many seconds to wait before escaping
@@ -169,7 +169,6 @@ class Boot:
         else:
             return True
 
-
 # The general items of Mode_2
 class Mode_2:
     # Contains functions helpful in constructing each mode 2
@@ -180,6 +179,9 @@ class Mode_2:
     Denied = pygame.image.load('Assets/Denied.png')
     Error = pygame.image.load('Assets/Error.png')
     ShowingFailure = {"showing": None, "time": 0}
+
+    ShowTerminal = False
+    PreviousText = []
 
     @staticmethod
     def Text():
@@ -221,6 +223,98 @@ class Mode_2:
         if Mode_2.ShowingFailure["time"]:
             Mode_2.ShowingFailure["time"] -= 1
             screen.blit(Mode_2.ShowingFailure["showing"], (265, 450))
+
+    @staticmethod
+    def Terminal():
+        if not Mode_2.ShowTerminal:
+            return
+        BlackBox = pygame.draw.rect(screen, Helpers.Color("Black"),(240, 200, 800, 400))
+        WhiteInside = pygame.draw.rect(screen, Helpers.Color("White"), (240, 200, 800, 400), 2)
+        WhiteInside = pygame.draw.rect(screen, Helpers.Color("White"), (244, 204, 794, 394), 1)
+
+        # Add some machine text
+        rows = 17
+        pos = (245, 225, 800)
+        Delay = 2
+        ChatWidth = 800
+
+        if random.randrange(Delay) == 1:  # 1/5 chance of text occuring! This way theres no pattern
+            Mode_2.PreviousText.append(
+                Helpers.randstr(80, 15))  # Generates random strings
+
+        if len(Mode_2.PreviousText) > rows:  # Limit the number of things said so there's no excess lines
+            del Mode_2.PreviousText[0]
+
+        # Generate text objects now
+        printList = []  # List of the objects
+        CurrentDistance = -90  # How far down the scren we have gone
+        for line in Mode_2.PreviousText:  # For each line in it
+            # Iterates through each line of text, formatting it and adding to printList
+            while Mode_2.SegoeUI_20.size(line)[0] > ChatWidth:  # Ensures each is not too long
+                line = line[0:len(line) - 1]  # If it is, removes 1 from it until it's not too long
+            ChatText = Mode_2.SegoeUI_20.render(line, True, (255, 255, 255))  # Create the text
+            screen.blit(ChatText, (pos[0], pos[1] + 70 + CurrentDistance))  # Add to the Sys.screen
+
+            CurrentDistance += Mode_2.SegoeUI_20.size(line)[1] - 5  # Create new distance
+
+        if Mode_2.ShowingFailure["time"]:
+            Mode_2.ShowingFailure["time"] -= 1
+            screen.blit(Mode_2.ShowingFailure["showing"], (265, 450))
+        return
+
+    @staticmethod
+    def ShowFailure():
+        # Show the failure Message
+        Mode_2.ShowingFailure["time"] = 120
+        Mode_2.ShowingFailure["showing"] = Mode_2.Denied
+        return
+
+# Fault Tolerance
+class Mode_3:
+    frame = 0
+    initiated = False
+
+    SegoeUI_100 = Helpers.Font.GetFont(100)
+    SegoeUI_125i = Helpers.Font.GetFont(125, italics=True)
+
+    LoadingBar = 0
+
+    @staticmethod
+    def init():
+        Mode_3.initiated = True
+
+    @staticmethod
+    def Background():
+        if Mode_3.frame < 31:
+            Mode_3.frame += .5
+            BlackFade = pygame.draw.rect(screen, Helpers.Color("DarkGray"), (0, 0, 1280, int(Mode_3.frame/30 * 1080)))
+            TaskBar.CreateTaskbar(0)
+            return
+        screen.fill(Helpers.Color("DarkGray"))
+        TaskBar.CreateTaskbar(0)
+
+        Helpers.CenterText("Fault Tolerance Activated:", Mode_3.SegoeUI_100, (0, 1280), 300, screen, (255, 255, 255))
+        Helpers.CenterText(user.Mode_5.data["System"], Mode_3.SegoeUI_125i, (0, 1280), 400, screen, (255, 255, 255))
+
+        Mode_3.LoadingBar = Mode_3.LoadingBar + 1 if Mode_3.LoadingBar < 60 else -60
+
+        if Mode_3.LoadingBar < 0:
+            WhiteBox = pygame.draw.rect(screen, Helpers.Color("White"), (0, 50, 1280, 20))
+            y_length = int((60 + Mode_3.LoadingBar)/60 * 1280)
+            MovingBox = pygame.draw.rect(screen, Helpers.Color("DarkGray"), (0, 50, y_length, 20))
+        else:
+            y_length = int((Mode_3.LoadingBar)/60 * 1280)
+            MovingBox = pygame.draw.rect(screen, Helpers.Color("White"), (0, 50, y_length, 20))
+
+
+    @staticmethod
+    def run():
+        if not Mode_3.initiated:
+            Mode_3.init()
+
+        Mode_3.Background()
+
+
 
 # The "Restarting" Phase
 class Mode_5:
@@ -406,8 +500,23 @@ while not done:
 
         if mode == 1:  # Begin Convergence
             if Key(event, pygame.K_F2):
-                mode = 1.5
-                Helpers.StatusBarText.CreateMessage(screen, "Began Mode 1.5", 90)
+                mode = 2
+                Helpers.StatusBarText.CreateMessage(screen, "Beginning Failure", 90)
+
+        if mode == 2:
+            if Key(event, pygame.K_TAB):
+                Mode_2.ShowTerminal = True
+                Helpers.StatusBarText.CreateMessage(screen, "Opening Terminal", 60)
+            if Mode_2.ShowTerminal and Key(event, pygame.K_RETURN):
+                Mode_2.ShowFailure()
+
+            if Key(event, pygame.K_F3):
+                time.sleep(1)
+                mode = 3
+
+        if mode == 3:
+            if Key(event, pygame.K_F5):
+                mode = 5
 
         if mode == 5:  # Keys to transition mode 5 to mode 6
             if Key(event, pygame.K_F6):
@@ -434,6 +543,13 @@ while not done:
             user.Navigator(mode=mode, unit=2)
         if Seconds % 5 == 0 and Frame == 0: # Once every 5 seconds
             user.Navigator(mode=mode, unit=5)
+
+        # If they want terminal showing
+        if Mode_2.ShowTerminal:
+            Mode_2.Terminal()
+
+    if mode == 3:
+        Mode_3.run()
 
     if mode == 5:
         Mode_5.run()

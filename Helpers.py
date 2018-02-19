@@ -78,7 +78,7 @@ def CenterText(text, font, x_range, y, screen, color):
     text_x = int((x_range[1] - x_range[0])/2)
     text_pos = (text_x - int(text_width / 2), y)
     final_text = font.render(text, True, color)  # Render the Profile Name
-    Sys.screen.blit(final_text, text_pos)  # Blit the name 5pix next to the icon
+    screen.blit(final_text, text_pos)  # Blit the name 5pix next to the icon
 
     return y + text_height
 
