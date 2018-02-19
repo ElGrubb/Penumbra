@@ -33,7 +33,7 @@ import Helpers, Lycron, Yakim, Rouak, Alyns
 
 # Important Variables
 FrameRate = 30
-Name = "Alyns"
+Name = "Yakim"
 mode = 0    # Starting Mode!
 bootSeconds = 1  # How many seconds to wait before booting
 EscapeTime = 3   # How many seconds to wait before escaping
@@ -97,6 +97,9 @@ class TaskBar:
     ProfileIcon = None   # Will be an object containing the loaded image of the person icon
     Font_SegoeUI = None  # Will be an object with the Font
     SearchBar = None     # Will be an object with the loaded image of the search bar
+
+    EndSearchBar = (0, 0)
+
     @staticmethod
     def init():
         """
@@ -127,6 +130,11 @@ class TaskBar:
         # Search Bar
         screen.blit(TaskBar.SearchBar, (text_width + Icon_Width + 15, 5))  # Put the search bar 15pix from the text
 
+        TaskBar.EndSearchBar = (text_width + Icon_Width + 15 + 370 + 15, 0)
+        Helpers.StatusBarText.position = TaskBar.EndSearchBar
+
+        Helpers.StatusBarText.Display()
+
         # Escape
         if Escape > 2:
             percentage = int(Escape/(FrameRate*EscapeTime)*100)
@@ -149,7 +157,6 @@ class Boot:
     def init():
         Boot.PODName = pygame.image.load('Assets/PODName.png')
 
-
     @staticmethod
     def Start():
         screen.fill(Helpers.Color("Black"))
@@ -161,6 +168,59 @@ class Boot:
             return False
         else:
             return True
+
+
+# The general items of Mode_2
+class Mode_2:
+    # Contains functions helpful in constructing each mode 2
+    PreviousText = []
+    SegoeUI_20 = Helpers.Font.GetFont(20)
+
+    Failure = pygame.image.load('Assets/Failure.png')
+    Denied = pygame.image.load('Assets/Denied.png')
+    Error = pygame.image.load('Assets/Error.png')
+    ShowingFailure = {"showing": None, "time": 0}
+
+    @staticmethod
+    def Text():
+        # Add some machine text
+        rows = 17
+        pos = (150, 400, 1000)
+        Delay = 5
+        ChatWidth = 1000
+
+        if random.randrange(Delay) == 1:  # 1/5 chance of text occuring! This way theres no pattern
+            Mode_2.PreviousText.append(
+                Helpers.randstr(100, 15))  # Generates random strings
+
+        if len(Mode_2.PreviousText) > rows:  # Limit the number of things said so there's no excess lines
+            del Mode_2.PreviousText[0]
+
+        # Generate text objects now
+        printList = []  # List of the objects
+        CurrentDistance = -90  # How far down the scren we have gone
+        for line in Mode_2.PreviousText:  # For each line in it
+            # Iterates through each line of text, formatting it and adding to printList
+            while Mode_2.SegoeUI_20.size(line)[0] > ChatWidth:  # Ensures each is not too long
+                line = line[0:len(line) - 1]  # If it is, removes 1 from it until it's not too long
+            ChatText = Mode_2.SegoeUI_20.render(line, True, (0, 0, 0))  # Create the text
+            screen.blit(ChatText, (pos[0], pos[1] + 70 + CurrentDistance))  # Add to the Sys.screen
+
+            CurrentDistance += Mode_2.SegoeUI_20.size(line)[1] - 5  # Create new distance
+        return
+
+    @staticmethod
+    def ErrorMessage(show=False):
+        # if show is True, blit it on
+        if show:
+            Mode_2.ShowingFailure["time"] = 180
+            Mode_2.ShowingFailure["showing"] = Mode_2.Denied
+
+
+        # If there's a failure message to be shown
+        if Mode_2.ShowingFailure["time"]:
+            Mode_2.ShowingFailure["time"] -= 1
+            screen.blit(Mode_2.ShowingFailure["showing"], (265, 450))
 
 # The "Restarting" Phase
 class Mode_5:
@@ -181,11 +241,9 @@ class Mode_5:
     PercentageColor = Helpers.Color("RedOrange")
 
     Failure = None
-    ShowingFailure = {"showing": None, "time": 0}
-
     Denied = None
     Error = None
-
+    ShowingFailure = {"showing": None, "time": 0}
 
     @staticmethod
     def init():
@@ -209,6 +267,7 @@ class Mode_5:
         end_y = Helpers.CenterText(Mode_5.data["System"], Mode_5.SegoeUI_125i, (0, 1280), 210, screen, (0, 0, 0))
 
         line = pygame.draw.line(screen, (0, 0, 0), (140, end_y), (1140, end_y), 5)
+        return
 
     @staticmethod
     def Text():
@@ -236,6 +295,7 @@ class Mode_5:
             screen.blit(ChatText, (pos[0], pos[1] + 70 + CurrentDistance))  # Add to the Sys.screen
 
             CurrentDistance += Mode_5.SegoeUI_20.size(line)[1] - 5  # Create new distance
+        return
 
     @staticmethod
     def LoadingText():
@@ -281,7 +341,6 @@ class Mode_5:
         if Mode_5.ShowingFailure["time"]:
             Mode_5.ShowingFailure["time"] -= 1
             screen.blit(Mode_5.ShowingFailure["showing"], (265, 450))
-
         return
 
     @staticmethod
@@ -292,8 +351,29 @@ class Mode_5:
         Mode_5.Background()
         Mode_5.Text()
         Mode_5.LoadingText()
-
         return
+
+# The Final Restart
+class Mode_6:
+    SegoeUI_100 = Helpers.Font.GetFont(100)
+    SegoeUI_125i = Helpers.Font.GetFont(125, italics=True)
+
+    frames = 0
+
+    @staticmethod
+    def run():
+        Mode_6.frames += 1
+
+        if Mode_6.frames < 30:
+            Mode_5.Background()
+        elif Mode_6.frames < 60:
+            screen.fill(Helpers.Color("LightGray"))
+        elif Mode_6.frames < 90:
+            screen.fill(Helpers.Color("Black"))
+        else:
+            screen.fill(Helpers.Color("Black"))
+            Helpers.CenterText("Restarting", Mode_6.SegoeUI_100, (0, 1280), 300, screen, (255, 255, 255))
+            Helpers.CenterText(user.Mode_5.data["System"], Mode_6.SegoeUI_125i, (0, 1280), 400, screen, (255, 255, 255))
 
 
 # Initiate Important Blitting Functions
@@ -311,19 +391,34 @@ pygame.key.set_repeat(500, 30)
 while not done:
     # Keyboard and Mouse Events
     for event in pygame.event.get():
-        if event.type == pygame.QUIT:    done = True
+        if event.type == pygame.QUIT:
+            done = True
+
+        # On Pressdown of Escape
         if Key(event, pygame.K_ESCAPE):
             Escape += 1
             if Escape >= FrameRate * EscapeTime:
                 done = True
 
+        # On Pressup of Escape
         if event.type == pygame.KEYUP and event.key == pygame.K_ESCAPE:
             Escape = 0
 
-    # Clear the screen
-    screen.fill(Helpers.Color("White"))
+        if mode == 1:  # Begin Convergence
+            if Key(event, pygame.K_F2):
+                mode = 1.5
+                Helpers.StatusBarText.CreateMessage(screen, "Began Mode 1.5", 90)
 
-    if mode == 1 or mode == 2:
+        if mode == 5:  # Keys to transition mode 5 to mode 6
+            if Key(event, pygame.K_F6):
+                time.sleep(2)
+                mode = 6
+        if mode == 6:
+            if Key(event, pygame.K_SPACE):
+                mode = 7
+
+    if 1 <= mode <= 2:
+        screen.fill(Helpers.Color("White"))
         # Add Taskbar
         TaskBar.CreateTaskbar(Escape=Escape)
 
@@ -342,6 +437,12 @@ while not done:
 
     if mode == 5:
         Mode_5.run()
+
+    if mode == 6:
+        Mode_6.run()
+
+    if mode == 7:
+        screen.fill(Helpers.Color("Black"))
 
     elif mode == 0:
         if not Boot.Start():

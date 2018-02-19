@@ -1,5 +1,8 @@
 import random
 import pygame
+
+pygame.font.init()
+
 # Hex Codes and colors
 def Color(name):
     """
@@ -75,7 +78,7 @@ def CenterText(text, font, x_range, y, screen, color):
     text_x = int((x_range[1] - x_range[0])/2)
     text_pos = (text_x - int(text_width / 2), y)
     final_text = font.render(text, True, color)  # Render the Profile Name
-    screen.blit(final_text, text_pos)  # Blit the name 5pix next to the icon
+    Sys.screen.blit(final_text, text_pos)  # Blit the name 5pix next to the icon
 
     return y + text_height
 
@@ -129,3 +132,34 @@ class Font:
         else:
             Font.LoadedFonts["FontName"] = pygame.font.Font("Assets/Fonts/" + FontName, size)
             return Font.LoadedFonts["FontName"]
+
+# A helper function that shows a message in tehs tatus bar
+class StatusBarText:
+    ShowingMSG = ""
+    TimeRemaining = 0
+    position = (0, 0)  # Added by Main.Taskbar()
+    screen = None
+
+    SegoeUI = Font.GetFont(30)
+
+    @staticmethod
+    def CreateMessage(screen, message: str, time: int):
+        """
+        Creates a message object to show on the top bar
+        :param message:  The string of what to say
+        :param time:     The time of how long to show it
+        :return:         None
+        """
+        StatusBarText.ShowingMSG = message
+        StatusBarText.TimeRemaining = time
+        StatusBarText.screen = screen
+
+    @staticmethod
+    def Display():
+        if not StatusBarText.TimeRemaining:
+            return
+
+        StatusBarText.TimeRemaining -= 1
+        Text = StatusBarText.SegoeUI.render(StatusBarText.ShowingMSG, True, (255, 255, 255))  # Render the Profile Name
+        StatusBarText.screen.blit(Text, StatusBarText.position)
+

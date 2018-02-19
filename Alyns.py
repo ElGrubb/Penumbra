@@ -18,12 +18,15 @@ class Mode_1:
     initiated = False
 
     SegoeUI_20li = Helpers.Font.GetFont(20, light=True, italics=True)
-    SegoeUI_25 = Helpers.Font.GetFont(25)
+    SegoeUI_20l  = Helpers.Font.GetFont(20, light=True)
+    SegoeUI_25b   = Helpers.Font.GetFont(25, bold=1)
+    SegoeUI_50b = Helpers.Font.GetFont(50, bold=1)
 
     selected = "Adriel"
     CharactersInfo = {}
     characters = ["Adriel", "Elik", "Kyr", "Ninmoda", "Lycron", "Yakim", "Rouak", "Usetha", "Alyns"]
 
+    AdvanceFrames = 0
 
     @staticmethod
     def init():
@@ -31,7 +34,9 @@ class Mode_1:
             Mode_1.CharactersInfo[Mode_1.characters[i]] = {"pos": (0, 50 + 100*i),
                                                            "num": i,
                                                            "name": Mode_1.characters[i],
-                                                           "ARIP_id": Helpers.IdealRandStr(15, UseCaps=True)}
+                                                           "ARIP_id": Helpers.IdealRandStr(15, UseCaps=True),
+                                                           "Second_id": Helpers.IdealRandStr(20),
+                                                           "Third_id": Helpers.IdealRandStr(5)}
 
         Mode_1.initiated = True
         return
@@ -55,11 +60,25 @@ class Mode_1:
 
         # Add Name
         TextPos = (BoxPos[0] + 5, BoxPos[1])
-        NameText = Mode_1.SegoeUI_25.render(info["name"], True, (0, 0, 0))  # Create the text
+        NameText = Mode_1.SegoeUI_25b.render(info["name"], True, (0, 0, 0))  # Create the text
         Sys.screen.blit(NameText, TextPos)  # Add to the Sys.screen
 
         IDtext = Mode_1.SegoeUI_20li.render("Model:  " + info["ARIP_id"], True, (0, 0, 0))
         Sys.screen.blit(IDtext, (TextPos[0] + 200, TextPos[1]))
+
+        SecondText = Mode_1.SegoeUI_20l.render("Working ID: " + info["Second_id"], True, (0, 0, 0))
+        Sys.screen.blit(SecondText, (TextPos[0], TextPos[1] + 45))
+
+        ThirdText = Mode_1.SegoeUI_20l.render("Status:  Connected to Central Processing", True, (0, 0, 0))
+        Sys.screen.blit(ThirdText, (TextPos[0], TextPos[1] + 70))
+        return
+
+    @staticmethod
+    def PersonalInfo():
+        info = Mode_1.CharactersInfo[Mode_1.selected]
+        BigName = Mode_1.SegoeUI_50b.render(info["name"] + "'s ARIP Information", True, (0, 0, 0))
+        Sys.screen.blit(BigName, (525, 50))
+
 
         return
 
@@ -74,10 +93,17 @@ class Mode_1:
             Mode_1.SidePerson(pos=character["pos"], info=character, color=Helpers.Color(color))
         return
 
+    @staticmethod
+    def Advance():
+        Mode_1.AdvanceFrames += 1
+        # Set up Data for Cataclysm
+
 
     @staticmethod
     def Run():
         Mode_1.SetUpSideBar()
+        Mode_1.PersonalInfo()
+        return
 
 class Mode_5:
     data = {
@@ -85,16 +111,17 @@ class Mode_5:
         "Dialogue": ["Listening for ARIPS", "Creating Artificial Brain",
                      "Narrowing Level Fields", "Managing Blood Levels",
                      "Establishing Secure Connections", "Connecting to Mainframe",
-                     "Cooking Up Food", "Supporting Life", "Restarting"]
+                     "Supporting Life", "Restarting"]
     }
 
 
 def Navigator(mode: int, unit=0):
-    if mode == 1:
+    if mode == 1 or mode == 1.5:
         if not Mode_1.initiated:
             Mode_1.init()
 
         if not unit:
             Mode_1.Run()
+            Mode_1.Advance()
         elif unit == 0.5:
             pass

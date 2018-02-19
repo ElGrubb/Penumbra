@@ -17,6 +17,7 @@ class Mode_1:
     initiated = False
     Frame = 0
     TotalFrames = 600
+    mode = 1
 
     WaterGraphValues = []  # Should be around 300 Values
     CarbonGraphValues = []  # Should also be around 300 values
@@ -34,6 +35,8 @@ class Mode_1:
 
     TopData = []
     RadarPoints = []
+
+    Advanced = False
 
     @staticmethod
     def init():
@@ -56,6 +59,8 @@ class Mode_1:
             Mode_1.WaterGraphValues.append(round(GraphSin(150, i, 10)))  # Create Water normal Values
             Mode_1.CarbonGraphValues.append(round(GraphSin(50, i, 3)))
             Mode_1.HumGraphValues.append(round(GraphSin(300, i, 8, UseThird=1)))
+
+        # print(Mode_1.WaterGraphValues)
 
         def TopChartWork(Frame):  # Create the positions of the Nitrogen and Oxygen necessary
             # Takes in the Frame number and returns the percentage of each Nitrogen and Oxygen
@@ -201,13 +206,16 @@ class Mode_1:
             mid = margin[1]/2
             range = (mid-30, mid+30)
             return random.randint(range[0], range[1])
-        elif mode == 2:
+        elif mode == 1.5:
             return random.randint(margin[0], margin[1])
 
     @staticmethod
     def GenerateNewPoint():
+        if Mode_1.mode == 1:
+            if random.randrange(2) == 1:
+                return
         del Mode_1.GraphValues[0]
-        Mode_1.GraphValues.append(Mode_1.CreateGraphPoints(mode=1))
+        Mode_1.GraphValues.append(Mode_1.CreateGraphPoints(mode=Mode_1.mode))
 
     @staticmethod
     def GenGraph():
@@ -273,8 +281,13 @@ class Mode_1:
                 if random.randint(0, 1):   # 50% chance itll keep that point
                     dummy_list.append(point)
 
+            if Mode_1.mode == 1.5:
+                limit = random.randint(10, 30)
+            elif Mode_1.mode == 1:
+                limit = 10
+
             # Limits them to 10 points. Fills in remaining points. 
-            for i in range(10-len(dummy_list)):  # Make the extra points
+            for i in range(limit-len(dummy_list)):  # Make the extra points
                 angle = math.radians(random.randint(0, 360))  # Random angle
                 scale = random.randint(20, 180)  # Random Vector Length
                 Coords = (round(scale * math.cos(angle)), round(scale * math.sin(angle)))  # Generate Coords based on those two
@@ -297,6 +310,21 @@ class Mode_1:
         
         return
 
+    @staticmethod
+    def Advance():
+        # Only run if its not set up and if it's at the 0 frame
+        if Mode_1.Advanced:
+            return
+        if Mode_1.Frame != 0:
+            return
+        for i in range(Mode_1.TotalFrames):
+            Mode_1.WaterGraphValues[i] = Mode_1.WaterGraphValues[i] * 2
+            Mode_1.CarbonGraphValues[i] = Mode_1.CarbonGraphValues[i] * 3
+            Mode_1.HumGraphValues[i] = Mode_1.HumGraphValues[i] * 3
+
+        Mode_1.mode = 1.5
+        Mode_1.Advanced = True
+        print("Beginning Cataclysm")
 
     @staticmethod
     def Run():
@@ -333,11 +361,13 @@ class Mode_5:
     }
 
 def Navigator(mode: int, unit=0):
-    if mode == 1:
+    if mode == 1 or mode == 1.5:
         if not Mode_1.initiated:
             Mode_1.init()
 
         if not unit:
             Mode_1.Run()
+            if mode == 1.5:
+                Mode_1.Advance()
         elif unit == 0.5:
             Mode_1.GenerateNewPoint()
