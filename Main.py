@@ -40,7 +40,7 @@ EscapeTime = 3   # How many seconds to wait before escaping
 
 # Initialize Pygame and clock
 pygame.init()
-pygame.font.init
+pygame.font.init()
 clock = pygame.time.Clock()
 
 # Set the height and width of the screen
