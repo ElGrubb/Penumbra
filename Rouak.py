@@ -18,6 +18,7 @@ class Mode_1:
 
     SecurityImages = []
     CurrentlyViewing = []
+    NoSignal = None
 
     @staticmethod
     def init():
@@ -30,6 +31,7 @@ class Mode_1:
             filepath = "Assets/Rouak/" + filepath + ".jpg"
 
             Mode_1.SecurityImages.append(pygame.image.load(filepath))
+            Mode_1.NoSignal = pygame.image.load("Assets/Rouak/NoSignal.jpg")
 
         for i in range(6):
             selected = random.choice(Mode_1.SecurityImages)
@@ -40,7 +42,7 @@ class Mode_1:
         Mode_1.initiated = True
 
     @staticmethod
-    def ShowScreens():
+    def ShowScreens(mode=1):
         # Display the screens in CurrentlyViewing
         start = (20, 70)
         coords = [(20, 70),  (650, 70),
@@ -48,8 +50,10 @@ class Mode_1:
                   (20, 740), (650, 740)]
 
         for i in range(6):
-            Sys.screen.blit(Mode_1.CurrentlyViewing[i], coords[i])  # Blit the image
-
+            if mode == 1:
+                Sys.screen.blit(Mode_1.CurrentlyViewing[i], coords[i])  # Blit the image
+            elif mode == 2:
+                Sys.screen.blit(Mode_1.NoSignal, coords[i])
         return
 
     @staticmethod
@@ -62,8 +66,8 @@ class Mode_1:
                 Mode_1.CurrentlyViewing[i] = selected
 
     @staticmethod
-    def Run():
-        Mode_1.ShowScreens()
+    def Run(mode=1):
+        Mode_1.ShowScreens(mode=mode)
 
 
 class Mode_5:
@@ -85,3 +89,5 @@ def Navigator(mode: int, unit=0):
             Mode_1.Run()
         elif unit == 2:
             Mode_1.ChangeScreens()
+    if mode == 2:
+        Mode_1.Run(mode=2)

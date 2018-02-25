@@ -33,7 +33,7 @@ import Helpers, Lycron, Yakim, Rouak, Alyns
 
 # Important Variables
 FrameRate = 30
-Name = "Lycron"
+Name = "Alyns"
 mode = 0    # Starting Mode!
 bootSeconds = 1  # How many seconds to wait before booting
 EscapeTime = 3   # How many seconds to wait before escaping
@@ -153,16 +153,27 @@ class TaskBar:
 class Boot:
     counter = 0
     PODName = None
+    SegoeUI_150i = Helpers.Font.GetFont(150, italics=True)
+
+    BlackLogo = None
+    WhiteLogo = None
+
+
     @staticmethod
     def init():
         Boot.PODName = pygame.image.load('Assets/PODName.png')
+        Boot.BlackLogo = pygame.image.load('Assets/BootLogoBlack.png')
+        Boot.WhiteLogo = pygame.image.load('Assets/BootLogoWhite.png')
 
     @staticmethod
     def Start():
         screen.fill(Helpers.Color("Black"))
         Boot.counter += 1
 
-        screen.blit(Boot.PODName, (0, 404))  # Blit the image
+        # screen.fill(Helpers.Color("DarkGray"))
+        screen.blit(Boot.WhiteLogo, (1280 / 2 - 250, 1080 / 2 - 370))
+
+        Helpers.CenterText("PodOS", Boot.SegoeUI_150i, (0, 1280), 650, screen, (255, 255, 255))
 
         if int(Boot.counter / FrameRate) >= bootSeconds:
             return False
@@ -325,6 +336,8 @@ class Mode_5:
     SegoeUI_100 = Helpers.Font.GetFont(100)
     SegoeUI_125i = Helpers.Font.GetFont(125, italics=True)
     SegoeUI_100sli = Helpers.Font.GetFont(100, semilight=True, italics=True)
+    SegoeUI_150i = Helpers.Font.GetFont(150, italics=True)
+
     initiated = False
 
     PreviousText = []
@@ -339,6 +352,10 @@ class Mode_5:
     Error = None
     ShowingFailure = {"showing": None, "time": 0}
 
+    Transition = 0
+    BlackLogo = None
+    WhiteLogo = None
+
     @staticmethod
     def init():
         Mode_5.data = user.Mode_5.data  # Retrieve data from user
@@ -346,6 +363,10 @@ class Mode_5:
         Mode_5.Failure = pygame.image.load('Assets/Failure.png')
         Mode_5.Denied = pygame.image.load('Assets/Denied.png')
         Mode_5.Error = pygame.image.load('Assets/Error.png')
+
+        Mode_5.BlackLogo = pygame.image.load('Assets/BootLogoBlack.png')
+        Mode_5.WhiteLogo = pygame.image.load('Assets/BootLogoWhite.png')
+
         Mode_5.initiated = True
         return
 
@@ -438,9 +459,45 @@ class Mode_5:
         return
 
     @staticmethod
+    def RunTransition():
+        if Mode_5.Transition < 30:
+            screen.fill(Helpers.Color("DarkGray"))
+            return
+        if Mode_5.Transition < 45:
+            screen.fill(Helpers.Color("DarkGray"))
+            screen.blit(Mode_5.WhiteLogo, (1280/2-250, 1080/2-370))
+            return
+        if Mode_5.Transition < 90:
+            screen.fill(Helpers.Color("DarkGray"))
+            screen.blit(Mode_5.WhiteLogo, (1280/2-250, 1080/2-370))
+
+            Helpers.CenterText("PodOS", Mode_5.SegoeUI_150i, (0, 1280), 650, screen, (255, 255, 255))
+            if Mode_5.Transition > 55:
+                Helpers.CenterText("Loading...", Mode_5.SegoeUI_50, (0, 1280), 830, screen, (255, 255, 255))
+            return
+        if Mode_5.Transition  > 90:
+            screen.fill(Helpers.Color("LightGray"))
+
+            WhiteBox = pygame.Rect((140, 140, 1000, 800))  # Set the Background for the taskbar rect
+
+            pygame.draw.rect(screen, Helpers.Color("White"), WhiteBox, 0)
+            pygame.draw.rect(screen, Helpers.Color("Black"), WhiteBox, 5)
+
+            screen.blit(Mode_5.BlackLogo, (1280 / 2 - 250, 1080 / 2 - 370))
+
+            Helpers.CenterText("PodOS", Mode_5.SegoeUI_150i, (0, 1280), 650, screen, (0, 0, 0))
+            Helpers.CenterText("Loading...", Mode_5.SegoeUI_50, (0, 1280), 830, screen, (0, 0, 0))
+            return
+
+    @staticmethod
     def run():
         if not Mode_5.initiated:
             Mode_5.init()
+
+        if not Mode_5.Transition == 150:
+            Mode_5.Transition += 1
+            Mode_5.RunTransition()
+            return
 
         Mode_5.Background()
         Mode_5.Text()

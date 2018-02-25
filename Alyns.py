@@ -28,6 +28,8 @@ class Mode_1:
 
     AdvanceFrames = 0
 
+    ARIPDrawings = []
+
     @staticmethod
     def init():
         for i in range(len(Mode_1.characters)):
@@ -36,8 +38,10 @@ class Mode_1:
                                                            "name": Mode_1.characters[i],
                                                            "ARIP_id": Helpers.IdealRandStr(15, UseCaps=True),
                                                            "Second_id": Helpers.IdealRandStr(20),
-                                                           "Third_id": Helpers.IdealRandStr(5)}
+                                                           "Third_id": Helpers.IdealRandStr(5),
+                                                           "JustChanged": 0}
 
+        Mode_1.ARIPDrawings.append(pygame.image.load("Assets/ARIP Diagram 1.png"))
         Mode_1.initiated = True
         return
 
@@ -89,9 +93,18 @@ class Mode_1:
             if Mode_1.selected == character['name']:
                 color = "White"
             else:
-                color = "DarkWhite"
+                color = "Gray"
             Mode_1.SidePerson(pos=character["pos"], info=character, color=Helpers.Color(color))
         return
+
+    @staticmethod
+    def GeneralInfo():  # Displays the right hand stuff about the person
+        character = Mode_1.CharactersInfo[Mode_1.selected]
+        if character["JustChanged"] > 0:  # Ensure there's like 1/6th of a second of whiteness when changing characters
+            character["JustChanged"] -= 1
+            return
+
+        Sys.screen.blit(random.choice(Mode_1.ARIPDrawings), (500, 100))
 
     @staticmethod
     def Advance():
@@ -103,6 +116,7 @@ class Mode_1:
     def Run():
         Mode_1.SetUpSideBar()
         Mode_1.PersonalInfo()
+        Mode_1.GeneralInfo()
         return
 
 class Mode_5:

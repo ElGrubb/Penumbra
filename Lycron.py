@@ -110,7 +110,7 @@ class Mode_1:
         # Generate the Status Lists that'll be used
         StartingStatusPosition = Mode_1.StatusPositionY
         for i in range(Mode_1.GenerateStatuses):
-            status = Mode_1.CreateCommuncation((Mode_1.StatusPositionX, StartingStatusPosition), {}, color=1)
+            status = Mode_1.CreateCommuncation((Mode_1.StatusPositionX, StartingStatusPosition), {}, color=1, mode=1)
             Mode_1.StatusList.append(status)
             StartingStatusPosition += Mode_1.StatusBuffer # Add 100 px for the size of the box and a buffer of 20
         Mode_1.BBimage = pygame.image.load('Assets/LycronBottomBar.png')
@@ -149,15 +149,15 @@ class Mode_1:
             CurrentDistance += Mode_1.Font_ChatWindow.size(line)[1] - Mode_1.String_Padding_min  # Create new distance
 
     @staticmethod
-    def Images():
+    def Images(mode=1):
         tempList = []
         for status in Mode_1.StatusList:
-            new_status = Mode_1.CreateCommuncation(status["pos"], status, color=status["Color"])
+            new_status = Mode_1.CreateCommuncation(status["pos"], status, color=status["Color"], mode=mode)
             tempList.append(new_status)
         Mode_1.StatusList = tempList
 
     @staticmethod
-    def CreateCommuncation(pos: tuple, info: dict, color: int):
+    def CreateCommuncation(pos: tuple, info: dict, color: int, mode=1):
         """
         Creates an object of shapes for a communcation button
         :param pos: A TUPLE containing the position of the box
@@ -195,7 +195,7 @@ class Mode_1:
             info['CurrentStatus'] = random.choice(Good_Statuses)
             info["JustChanged"] = False
 
-        if random.randrange(400) == 100: # todo add mode
+        if random.randrange(400) == 100 and mode == 1: # todo add mode
             if color == 0:
                 info['CurrentStatus'] = random.choice(Bad_Statuses)
                 color = 1
@@ -284,10 +284,46 @@ class Mode_1:
         Sys.screen.blit(Mode_1.BBimage, Mode_1.BBposition)
 
     @staticmethod
-    def Run():
-        Mode_1.Text()
-        Mode_1.Images()
+    def Run(mode=1):
+        Mode_1.Text(mode=mode)
+        Mode_1.Images(mode=mode)
         Mode_1.BottomBar()
+
+
+class Mode_2:
+    Changed = False
+
+    @staticmethod
+    def BeginCascade():  # Runs twice a second to commense meltdown
+        if random.randrange(2) == 1:
+            StatusList = Mode_1.StatusList
+            selected_int = random.randint(0, len(StatusList)-1)
+
+            # Randomly chooses either red or orange
+            StatusList[selected_int]["Color"] = 0
+            StatusList[selected_int]["JustChanged"] = True
+
+            SelectedStatus = StatusList[selected_int]  # Make dedicated Variable
+            StatusList.remove(SelectedStatus)          # Remove from List
+            StatusList =[SelectedStatus] + StatusList  # Move to the top of the list
+
+            # Redo Positions
+            starting = Mode_1.StatusPositionY
+            for status in StatusList:
+                status["pos"] = (Mode_1.StatusPositionX, starting)
+                starting += Mode_1.StatusBuffer
+
+            Mode_1.StatusList = StatusList
+
+            # Check if they're all red
+            totalvar = 0  # Adds each time one is green
+            for status in StatusList:  # For each status in the list
+                if status["Color"] != 0:
+                    totalvar += 1
+
+            if totalvar == 0:
+                Mode_2.Changed = True
+
 
 
 class Mode_5:
@@ -317,4 +353,9 @@ def Navigator(mode: int, unit=0):
 
         elif unit == 5:
             Mode_1.RandColorChange()
+
+    if mode == 2:
+        Mode_1.Run(mode=2)
+        if unit == .5 and not Mode_2.Changed:
+            Mode_2.BeginCascade()
 

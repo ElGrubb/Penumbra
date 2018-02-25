@@ -18,7 +18,7 @@ def Color(name):
         "Yellow": 0xf1c40f,
         "Green": 0x2ecc71,
         "DarkGray": 0x222222,
-        "Gray": 0x2c3e50,
+        "Gray": 0x909090,
         "LightGray": 0x7f8c8d,
         "DarkWhite": 0xe8e8e8,
         "Teal": 0x1abc9c,

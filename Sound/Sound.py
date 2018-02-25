@@ -35,7 +35,7 @@ info = [{
 }, {
     "Number": 4,
     "Name": "BeginningBeep_A4:  5",
-    "File": "Beeps_A4.wav",
+    "File": "Test01.wav",
     "Queue": "ALYNS: 11.5% degradation in the biosignatures of the ARIP. [NOW]"
 }, {
     "Number": 5,
@@ -144,7 +144,11 @@ while not done:
             if play != None:
                 print("Playing " + info[play]["Name"])
                 to_play = pygame.mixer.Sound(info[play]["File"])
+                pygame.mixer.Channel(play).set_volume(13.0)
                 pygame.mixer.Channel(play).play(to_play)
+
+                print(pygame.mixer.Channel(play).get_volume())
+
             if play == 5:
                 time.sleep(1.1)
                 play = 6
@@ -156,9 +160,6 @@ while not done:
                     # j = 5-j
                     pygame.mixer.Channel(j).stop()
                     play = 6
-
-
-
 
     screen.fill(Color("White"))
     ShowInfo()
