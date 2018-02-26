@@ -16,7 +16,7 @@ except:
     monitor = True
     time.sleep(2)
     import os, sys
-import Helpers, Lycron, Yakim, Rouak, Alyns
+import Helpers, Lycron, Yakim, Rouak, Alyns, Usetha
 """ Modes
 0: Boot
 1: Initial Screens
@@ -33,7 +33,7 @@ import Helpers, Lycron, Yakim, Rouak, Alyns
 
 # Important Variables
 FrameRate = 30
-Name = "Usetha"
+Name = "Alyns"
 mode = 0    # Starting Mode!
 bootSeconds = 1  # How many seconds to wait before booting
 EscapeTime = 3   # How many seconds to wait before escaping

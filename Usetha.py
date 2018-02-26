@@ -25,6 +25,14 @@ class Mode_1:
     def Run():
         pass
 
+class Mode_5:
+    data = {
+        "System": "Hydropponics",
+        "Dialogue": ["Reconfiguring Hydroponics", "Starting Eco-Lights",
+                     "Configuring Gardening Data", "Testing Sprinkler System",
+                     "Success...", "Planting Abby Berries"]
+    }
+
 
 def Navigator(mode: int, unit=0):
     if mode == 1:
