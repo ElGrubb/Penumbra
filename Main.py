@@ -33,7 +33,7 @@ import Helpers, Lycron, Yakim, Rouak, Alyns
 
 # Important Variables
 FrameRate = 30
-Name = "Alyns"
+Name = "Usetha"
 mode = 0    # Starting Mode!
 bootSeconds = 1  # How many seconds to wait before booting
 EscapeTime = 3   # How many seconds to wait before escaping
@@ -325,8 +325,6 @@ class Mode_3:
 
         Mode_3.Background()
 
-
-
 # The "Restarting" Phase
 class Mode_5:
     data = None
@@ -554,6 +552,13 @@ while not done:
         # On Pressup of Escape
         if event.type == pygame.KEYUP and event.key == pygame.K_ESCAPE:
             Escape = 0
+
+        # Up and Down for Alyns
+        if Name == "Alyns":
+            if Key(event, pygame.K_UP):
+                user.Key("UP")
+            if Key(event, pygame.K_DOWN):
+                user.Key("DOWN")
 
         if mode == 1:  # Begin Convergence
             if Key(event, pygame.K_F2):
