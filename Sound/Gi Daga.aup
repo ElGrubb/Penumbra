@@ -1,0 +1,25 @@
+<?xml version="1.0" standalone="no" ?>
+<!DOCTYPE project PUBLIC "-//audacityproject-1.3.0//DTD//EN" "http://audacity.sourceforge.net/xml/audacityproject-1.3.0.dtd" >
+<project xmlns="http://audacity.sourceforge.net/xml/" projname="Gi Daga_data" version="1.3.0" audacityversion="2.2.2" sel0="9.6469929591" sel1="9.6469929591" vpos="0" h="0.0000000000" zoom="81.4761660272" rate="44100.0" snapto="off" selectionformat="hh:mm:ss + milliseconds" frequencyformat="Hz" bandwidthformat="octaves">
+	<tags/>
+	<wavetrack name="Audio Track" channel="2" linked="0" mute="0" solo="0" height="150" minimized="0" isSelected="1" rate="44100" gain="1.412538" pan="0.0" colorindex="0">
+		<waveclip offset="0.00000000" colorindex="0">
+			<sequence maxsamples="262144" sampleformat="262159" numsamples="476852">
+				<waveblock start="0">
+					<simpleblockfile filename="e080803f.au" len="262144" min="-0.820204" max="0.820314" rms="0.237344"/>
+				</waveblock>
+				<waveblock start="262144">
+					<simpleblockfile filename="e08089fb.au" len="179526" min="-0.98167" max="0.981256" rms="0.348596"/>
+				</waveblock>
+				<waveblock start="441670">
+					<simpleblockfile filename="e08088d6.au" len="35182" min="-0.200388" max="0.135596" rms="0.001503"/>
+				</waveblock>
+			</sequence>
+			<envelope numpoints="3">
+				<controlpoint t="9.597898847358" val="0.971830964088"/>
+				<controlpoint t="10.088839964870" val="0.070422530174"/>
+				<controlpoint t="10.383404635377" val="0.000000100000"/>
+			</envelope>
+		</waveclip>
+	</wavetrack>
+</project>

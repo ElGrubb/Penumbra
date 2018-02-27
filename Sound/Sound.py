@@ -15,41 +15,51 @@ ViewFont = pygame.font.Font("SegoeUI.ttf", 30)
 info = [{
     "Number": 0,
     "Name": "BeginningBeep_A:  1",
-    "File": "Beeps_A.wav",
+    "File": "NBeeps_0.wav",
     "Queue": "GRACE: Interpod signals are scattered. Heightened frequency of network transmissions.[NOW]"
 }, {
     "Number": 1,
     "Name": "BeginningBeep_C:  2",
-    "File": "Beeps_C.wav",
+    "File": "NBeeps_1.wav",
     "Queue": "USETHA: Nutrient solution temperature increasing, nutrient levels decreasing. [NOW]"
 }, {
     "Number": 2,
     "Name": "BeginningBeep_Eb:  3",
-    "File": "Beeps_Eb.wav",
+    "File": "NBeeps_2.wav",
     "Queue": "ROUAK: Exterior visuals down. POD barriers are beginning collapse. [NOW]"
 }, {
     "Number": 3,
     "Name": "BeginningBeep_Gb:  4",
-    "File": "Beeps_Gb.wav",
+    "File": "NBeeps_3.wav",
     "Queue": "YAKIM: Oxygen concentration levels depreciating by 3%. Nitrogen concentration increased—[NOW]"
 }, {
     "Number": 4,
     "Name": "BeginningBeep_A4:  5",
-    "File": "Test01.wav",
+    "File": "NBeeps_4.wav",
     "Queue": "ALYNS: 11.5% degradation in the biosignatures of the ARIP. [NOW]"
 }, {
     "Number": 5,
     "Name": "Convergence Fourthcoming",
-    "File": "Convergence.wav",
+    "File": "ConvergenceFourthcoming_2.wav",
     "Queue": "ADRIEL and ELIK: Failsafe Echo Delta Niner [1s 2s NOW]"
 }, {
     "Number": 6,
-    "Name": "Shutdown",
-    "File": "Shutdown.wav",
+    "Name": "Shutdown2",
+    "File": "Shutdown2.wav",
+    "Queue": "[Automatic]"
+}, {
+    "Number": 7,
+    "Name": "RouakAlarm",
+    "File": "RouakAlarm.wav",
+    "Queue": "ELIK and ADRIEL: Understood [NOW]"
+}, {
+    "Number": 8,
+    "Name": "Gi Daga",
+    "File": "Gi Daga.wav",
     "Queue": "[Automatic]"
 }
 ]
-
+pygame.mixer.set_num_channels(len(info))
 for i in range(len(info)):  # Adds a tag that none of them have been played yet
     info[i]["played"] = False
 
@@ -160,6 +170,12 @@ while not done:
                     # j = 5-j
                     pygame.mixer.Channel(j).stop()
                     play = 6
+
+            if play == 8:
+                pygame.mixer.Channel(7).stop()
+                time.sleep(2)
+                to_play = pygame.mixer.Sound(info[8]["File"])
+                pygame.mixer.Channel(8).play(to_play)
 
     screen.fill(Color("White"))
     ShowInfo()

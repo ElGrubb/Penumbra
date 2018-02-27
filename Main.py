@@ -33,7 +33,8 @@ import Helpers, Lycron, Yakim, Rouak, Alyns, Usetha
 
 # Important Variables
 FrameRate = 30
-Name = "Alyns"
+with open("CurrentUser.txt", "r") as file:
+    Name = file.read()
 mode = 0    # Starting Mode!
 bootSeconds = 1  # How many seconds to wait before booting
 EscapeTime = 3   # How many seconds to wait before escaping
