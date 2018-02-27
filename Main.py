@@ -16,7 +16,7 @@ except:
     monitor = True
     time.sleep(2)
     import os, sys
-import Helpers, Lycron, Yakim, Rouak, Alyns, Usetha
+import Helpers, Lycron, Yakim, Rouak, Alyns, Usetha, Processing
 """ Modes
 0: Boot
 1: Initial Screens
@@ -48,7 +48,7 @@ clock = pygame.time.Clock()
 screen_width = 1280
 screen_height = 1080
 if monitor:
-    screen = pygame.display.set_mode()#, pygame.FULLSCREEN, 32)
+    screen = pygame.display.set_mode() #, pygame.FULLSCREEN, 32)
     w, h = pygame.display.get_surface().get_size()
     screen = pygame.display.set_mode((w, h), pygame.FULLSCREEN)
 elif not monitor:
