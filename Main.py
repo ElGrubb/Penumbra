@@ -546,6 +546,12 @@ while not done:
             if Escape >= FrameRate * EscapeTime:
                 done = True
 
+        # On Pressdown of Escape
+        if Key(event, pygame.K_EQUALS):
+            Escape += 1
+            if Escape >= FrameRate * EscapeTime:
+                done = True
+
         # On Pressup of Escape
         if event.type == pygame.KEYUP and event.key == pygame.K_ESCAPE:
             Escape = 0

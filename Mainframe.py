@@ -57,9 +57,9 @@ class Mode_1:
         ChatWidth = 300
 
         if mode == 2:
-            delay = 1
+            Delay = 1
         elif mode == 1:
-            delay = 10
+            Delay = 10
 
         if random.randrange(Delay) == 1:  # 1/5 chance of text occuring! This way theres no pattern
             Mode_1.PreviousText.append(
