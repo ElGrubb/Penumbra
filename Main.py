@@ -159,7 +159,6 @@ class Boot:
     BlackLogo = None
     WhiteLogo = None
 
-
     @staticmethod
     def init():
         Boot.PODName = pygame.image.load('Assets/PODName.png')
@@ -169,17 +168,14 @@ class Boot:
     @staticmethod
     def Start():
         screen.fill(Helpers.Color("Black"))
-        Boot.counter += 1
+        if Boot.counter < FrameRate * 4:
+            screen.fill(Helpers.Color("Black"))
+            Boot.counter += 1
 
-        # screen.fill(Helpers.Color("DarkGray"))
-        screen.blit(Boot.WhiteLogo, (1280 / 2 - 250, 1080 / 2 - 370))
+            # screen.fill(Helpers.Color("DarkGray"))
+            screen.blit(Boot.WhiteLogo, (1280 / 2 - 250, 1080 / 2 - 370))
 
-        Helpers.CenterText("PodOS", Boot.SegoeUI_150i, (0, 1280), 650, screen, (255, 255, 255))
-
-        if int(Boot.counter / FrameRate) >= bootSeconds:
-            return False
-        else:
-            return True
+            Helpers.CenterText("PodOS", Boot.SegoeUI_150i, (0, 1280), 650, screen, (255, 255, 255))
 
 # The general items of Mode_2
 class Mode_2:
@@ -561,6 +557,10 @@ while not done:
             if Key(event, pygame.K_DOWN):
                 user.Key("DOWN")
 
+        if mode == 0:  # Begin Mode 1
+            if Key(event, pygame.K_SPACE):
+                mode = 1
+
         if mode == 1:  # Begin Convergence
             if Key(event, pygame.K_F2):
                 mode = 2
@@ -624,8 +624,7 @@ while not done:
         screen.fill(Helpers.Color("Black"))
 
     elif mode == 0:
-        if not Boot.Start():
-            mode = 1
+        Boot.Start()
 
     # Update the screen
     pygame.display.flip()
