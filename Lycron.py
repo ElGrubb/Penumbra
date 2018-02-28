@@ -79,11 +79,6 @@ class Mode_1:
     PreviousText = []  # A list for the previous words that were added
     PossibleRows = 0  # Will contain how many rows of text can be fit
     Font_ChatWindow = None  # Object that will contain the Chat Window
-    Lycron00 = None
-    Lycron01 = None
-    Lycron02 = None
-    Lycron03 = None
-    LycronImages = [Lycron00, Lycron01, Lycron02, Lycron03]
     CurrentImage = 0
     SegoeUI_Small = Helpers.Font.GetFont(15)
     SemiboldSegoeUI_Small = Helpers.Font.GetFont(15, bold=1)
@@ -96,12 +91,6 @@ class Mode_1:
         # Start up all the image files necessary
         Mode_1.Font_ChatWindow = Helpers.Font.GetFont(Mode_1.Font_Width)
         Mode_1.PossibleRows = math.floor(Mode_1.ChatHeight / (Mode_1.Font_ChatWindow.size("Mode_1")[1] - 10)) - 11
-
-        Mode_1.Lycron00 = pygame.image.load('Assets/Lycron00.png')
-        Mode_1.Lycron01 = pygame.image.load('Assets/Lycron01.png')
-        Mode_1.Lycron02 = pygame.image.load('Assets/Lycron02.png')
-        Mode_1.Lycron03 = pygame.image.load('Assets/Lycron03.png')
-        Mode_1.LycronImages = [Mode_1.Lycron00, Mode_1.Lycron01, Mode_1.Lycron02, Mode_1.Lycron03]
 
         # Generate Starting Text rows
         for i in range(Mode_1.PossibleRows):
