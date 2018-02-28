@@ -29,6 +29,7 @@ class Mode_1:
     GeneralText = None
 
     Advanced = False
+    HydroponicsImage = None
 
 
     @staticmethod
@@ -53,6 +54,7 @@ class Mode_1:
             Mode_1.NutrientsGraph.append(round(GraphSin(300, i, 8, UseThird=1)))
 
         Mode_1.GeneralText = pygame.image.load("Assets/Usetha01.png")
+        Mode_1.HydroponicsImage = pygame.image.load("Assets/hydroponics.jpg")
 
         Mode_1.initiated = True
 
@@ -125,6 +127,7 @@ class Mode_1:
                            y_position=GraphYPos)
 
         Sys.screen.blit(Mode_1.GeneralText, (20, 70))
+        Sys.screen.blit(Mode_1.HydroponicsImage, (50, 425))
 
 
 class Mode_5:
