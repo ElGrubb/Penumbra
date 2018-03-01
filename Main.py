@@ -282,14 +282,48 @@ class Mode_3:
     frame = 0
     initiated = False
 
+    PreviousText = []
+
     SegoeUI_100 = Helpers.Font.GetFont(100)
     SegoeUI_125i = Helpers.Font.GetFont(125, italics=True)
 
     LoadingBar = 0
 
+    Transitioned = False
+
     @staticmethod
     def init():
         Mode_3.initiated = True
+
+    @staticmethod
+    def Text():
+        # Add some machine text
+        rows = 17
+        pos = (150, 600, 1000)
+        Delay = 5
+        ChatWidth = 1000
+        if not Mode_3.Transitioned:
+            return
+
+        if random.randrange(Delay) == 1:  # 1/5 chance of text occuring! This way theres no pattern
+            Mode_3.PreviousText.append(
+                Helpers.randstr(100, 15))  # Generates random strings
+
+        if len(Mode_3.PreviousText) > rows:  # Limit the number of things said so there's no excess lines
+            del Mode_3.PreviousText[0]
+
+        # Generate text objects now
+        printList = []  # List of the objects
+        CurrentDistance = -90  # How far down the scren we have gone
+        for line in Mode_3.PreviousText:  # For each line in it
+            # Iterates through each line of text, formatting it and adding to printList
+            while Mode_5.SegoeUI_20.size(line)[0] > ChatWidth:  # Ensures each is not too long
+                line = line[0:len(line) - 1]  # If it is, removes 1 from it until it's not too long
+            ChatText = Mode_5.SegoeUI_20.render(line, True, (255, 255, 255))  # Create the text
+            screen.blit(ChatText, (pos[0], pos[1] + 70 + CurrentDistance))  # Add to the Sys.screen
+
+            CurrentDistance += Mode_5.SegoeUI_20.size(line)[1] - 5  # Create new distance
+        return
 
     @staticmethod
     def Background():
@@ -313,6 +347,7 @@ class Mode_3:
         else:
             y_length = int((Mode_3.LoadingBar)/60 * 1280)
             MovingBox = pygame.draw.rect(screen, Helpers.Color("White"), (0, 50, y_length, 20))
+            Mode_3.Transitioned = True
 
 
     @staticmethod
@@ -321,6 +356,7 @@ class Mode_3:
             Mode_3.init()
 
         Mode_3.Background()
+        Mode_3.Text()
 
 # The "Restarting" Phase
 class Mode_5:
