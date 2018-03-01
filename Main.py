@@ -448,9 +448,9 @@ class Mode_5:
         screen.blit(PercentageTextBox, pos)  # Add to the Sys.screen
 
         # If there's a failure message to be shown
-        if Mode_5.ShowingFailure["time"]:
-            Mode_5.ShowingFailure["time"] -= 1
-            screen.blit(Mode_5.ShowingFailure["showing"], (265, 450))
+        # if Mode_5.ShowingFailure["time"]:
+        #     Mode_5.ShowingFailure["time"] -= 1
+        #     screen.blit(Mode_5.ShowingFailure["showing"], (265, 450))
         return
 
     @staticmethod
@@ -591,9 +591,9 @@ while not done:
             if Key(event, pygame.K_F6):
                 time.sleep(2)
                 mode = 6
-        if mode == 6:
-            if Key(event, pygame.K_SPACE):
-                mode = 7
+        # if mode == 6:
+        #     if Key(event, pygame.K_SPACE):
+        #         mode = 7
 
     if 1 <= mode <= 2:
         screen.fill(Helpers.Color("White"))
